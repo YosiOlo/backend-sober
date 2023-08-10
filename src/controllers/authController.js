@@ -33,19 +33,19 @@ module.exports = {
         const hashPassword = await bcrypt.hash(password, salt);
 
         try {
-            const token = jwt.sign({id: newUser.id}, process.env.JWT_SECRET, {expiresIn: '1d'});
+            const token = jwt.sign({email: email}, process.env.JWT_SECRET, {expiresIn: '2h'}, { algorithm: 'RS256' });
 
             const newUser = await ec_customer.create({
-                nama: nama,
+                name: nama,
                 email: email,
                 password: hashPassword,
+                status: "disabled",
                 avatar: 'https://res.cloudinary.com/dkxt6mlnh/image/upload/v1682927959/drown/images-removebg-preview_nmbyo7.png',
                 is_vendor: is_vendor,
                 referral: referral,
                 email_verify_token: token,
                 created_at: new Date(),
                 updated_at: new Date(),
-
             });
 
             const transporter = NodeMailer.createTransport({
@@ -59,8 +59,42 @@ module.exports = {
             const mailOptions = {
                 from: process.env.EMAIL,
                 to: email,
-                subject: 'Verify Email',
-                html: `<p>Click this link to verify your email <a href="${process.env.CLIENT_URL}/verify/${token}">Verify Email</a></p>`
+                subject: 'Verify Email Sobermart',
+                html: `<!DOCTYPE html>
+<html>
+    <center> 
+        <h1>Email Verification For ${nama}</h1>
+        <p>Click this link to verify your email, valid for 2 hours</p>
+        <div>
+            <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1691564307/sobermart/sob-logos-1_bnnccj.png" alt="Drown Logo" width="310" height="85">
+        </div>
+        <button 
+            style=
+            "
+            border: none;
+            transition-duration: 0.4s;
+            cursor: pointer;
+            background-color: #76b5c3;
+            margin-top: 20px;
+            border-radius: 12px;
+            "
+            type="button"
+        > 
+            <a 
+            style=
+            "
+            text-decoration: none;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;color: white;
+            padding: 10px 32px;
+            transition-duration: 0.4s;" 
+            href='http://localhost:3000/api/auth/verify/${token}'>Verify Email</a>
+        </button>
+        <center>
+</html>`
             };
 
             transporter.sendMail(mailOptions, (err, info) => {
@@ -78,6 +112,25 @@ module.exports = {
 
     async signin(req, res) {
         const {email, password, is_remember} = req.body;
+        // const {token_remember} = req.cookies;
+
+        // if (token_remember !== undefined) {
+        //     try {
+        //         const decoded = jwt.verify(token_remember, process.env.JWT_SECRET);
+        //         const user = await ec_customer.findOne({
+        //             where: {
+        //                 id: decoded.id
+        //             }
+        //         });
+
+        //         if (user) {
+        //             const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: '1d'}, { algorithm: 'RS256' });
+        //             return res.status(200).json({message: 'Login success', token: token});
+        //         }
+        //     } catch(e) {
+        //         return res.status(500).json({message: e.message});
+        //     }
+        // }
 
         try {
             if (email === '' || password === '') {
@@ -109,7 +162,7 @@ module.exports = {
         try {
             if (await bcrypt.compare(password, user.password)) {
                 const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: '1d'});
-                return res.status(200).json({message: 'Login success', token: token});
+                return res.status(200).json({message: 'Login success', status: 200, token: token});
             } else {
                 return res.status(400).json({message: 'Password not match'});
             }
@@ -117,53 +170,6 @@ module.exports = {
             return res.status(500).json({message: e.message});
         }
 
-    },
-
-    async forgotPassword(req, res) {
-        const {email} = req.body;
-
-        try {
-            if (email === '') {
-                return res.status(400).json({message: 'Please fill all field'});
-            }
-        } catch (e) {
-            return res.status(500).json({message: e.message});
-        }
-
-        const user = await ec_customer.findOne({
-            where: {
-                email: email
-            }
-        });
-
-        if (!user) {
-            return res.status(400).json({message: 'Email not found'});
-        }
-
-        const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: '1d'});
-
-        const transporter = NodeMailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD
-            }
-        });
-
-        const mailOptions = {
-            from: process.env.EMAIL,
-            to: email,
-            subject: 'Reset Password',
-            html: `<p>Click this link to reset your password <a href="${process.env.CLIENT_URL}/reset-password/${token}">Reset Password</a></p>`
-        };
-
-        transporter.sendMail(mailOptions, (err, info) => {
-            if (err) {
-                return res.status(500).json({message: err.message});
-            } else {
-                return res.status(200).json({message: 'Email sent'});
-            }
-        });
     },
 
     async resetPassword(req, res) {
@@ -211,27 +217,41 @@ module.exports = {
             if (token === '' || token === undefined) {
                 return res.status(400).json({message: 'Please fill all field'});
             }
+
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            return res.status(500).json({message: "Internal Error", e});
+        }
+        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.exp < Date.now() / 1000) {
+            return res.status(400).json({message: 'Token expired'});
         }
 
         const user = await ec_customer.findOne({
             where: {
-                id: jwt.verify(token, process.env.JWT_SECRET).id
+                email: decoded.email
             }
         });
 
         if (!user) {
             return res.status(400).json({message: 'User not found'});
         }
-
+        if (user.status == "activated") {
+            return res.render("alreadyVerified.ejs")
+        }
+        
+        let update = {
+            email_verify_token: null,
+            status: "activated",
+            confirmed_at: new Date(),
+        }
         try {
-            await ec_customer.update({is_verified: true}, {
+            await ec_customer.update(update, {
                 where: {
                     id: user.id
                 }
             });
-            return res.status(200).json({message: 'User verified'});
+            return res.render("emailVerified.ejs")
         } catch (e) {
             return res.status(500).json({message: e.message});
         }
