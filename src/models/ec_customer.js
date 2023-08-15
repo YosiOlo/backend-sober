@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      ec_customer.hasMany(models.ec_customer_address, { foreignKey: 'customer_id', as: 'customer_address' });
+      ec_customer.hasMany(models.ec_customer_password_reset, { foreignKey: 'email', as: 'customer_password_reset' });
+      ec_customer.hasMany(models.ec_customer_paket, { foreignKey: 'user_id', as: 'customer_paket' });
+      ec_customer.hasMany(models.ec_customer_recently_viewed_product, { foreignKey: 'customer_id', as: 'customer_recently_viewed_product' });
     }
   }
   ec_customer.init({

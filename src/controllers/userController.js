@@ -81,5 +81,55 @@ module.exports = {
         });
 
         return res.status(200).json({message: 'Profile updated'});
+    },
+
+    async listCustomer(req, res) {
+        const page = req.query.page ? req.query.page : 1;
+        const limit = req.query.limit ? req.query.limit : 10;
+        const search = req.query.search ? req.query.search: '';
+
+        const offset = page * limit - limit;
+
+        const customers = await ec_customer.findAndCountAll({
+            where: {
+                [Op.or]: [
+                    {
+                        name: {
+                            [Op.like]: `%${search}%`
+                        }
+                    },
+                    {
+                        email: {
+                            [Op.like]: `%${search}%`
+                        }
+                    },
+                    {
+                        phone: {
+                            [Op.like]: `%${search}%`
+                        }
+                    }
+                ]
+            },
+            limit: parseInt(limit),
+            offset: offset,
+            include: ['customer_address', 'customer_paket', 'customer_recently_viewed_product']
+        });
+
+        return res.status(200).json(
+            customers
+        );
+    },
+
+    async currentUser(req, res) {
+        const {id} = req.user;
+
+        const user = await ec_customer.findOne({
+            where: {
+                id: id
+            },
+            include: ['customer_address', 'customer_paket', 'customer_recently_viewed_product']
+        });
+
+        return res.status(200).json(user);
     }
 }

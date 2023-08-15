@@ -1,10 +1,10 @@
 module.exports={
   "development": {
-    "username": "root",
-    "password": "Rizqi5701",
+    "username": "postgres",
+    "password": "",
     "database": "sobermart",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "postgres"
   },
   "test": {
     "username": "root",

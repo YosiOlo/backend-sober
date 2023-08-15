@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class ec_cart extends Model {
+  class ec_bank_list extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,20 +13,20 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  ec_cart.init({
-    customer_id: DataTypes.INTEGER,
-    product_id: DataTypes.INTEGER,
-    qty: DataTypes.INTEGER,
-    attributes: DataTypes.STRING,
-    extras: DataTypes.STRING,
-    options: DataTypes.STRING,
+  ec_bank_list.init({
+    bank_code: DataTypes.STRING,
+    bank_holder: DataTypes.STRING,
+    bank_nomor: DataTypes.STRING,
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
-    is_buynow: DataTypes.INTEGER
+    deleted_at: DataTypes.DATE,
+    bank_name: DataTypes.STRING,
+    icons: DataTypes.TEXT,
+    fee: DataTypes.BIGINT
   }, {
     sequelize,
-    modelName: 'ec_cart',
+    modelName: 'ec_bank_list',
     timestamps: false,
   });
-  return ec_cart;
+  return ec_bank_list;
 };
