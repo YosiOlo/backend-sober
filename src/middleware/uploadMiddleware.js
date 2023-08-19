@@ -1,20 +1,21 @@
 const multer = require('multer');
 const path = require('path');
+const {v4: uuidv4} = require('uuid');
 
-const storage = multer.diskStorage({
+const storage_customer = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, 'public/images');
+        callback(null, 'public/customers');
     },
     filename: (req, file, callback) => {
-        callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+        callback(null, uuidv4()+ file.extname(file.originalname).split('.')[1] + path.extname(file.originalname))
     }
 });
 
 const upload = multer({ 
-    storage: storage,
+    storage: storage_customer,
     fileFilter: (req, file, callback) => {
         const ext = path.extname(file.originalname);
-        if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
+        if(ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
             return callback(new Error('Only images are allowed'));
         }
         callback(null, true);

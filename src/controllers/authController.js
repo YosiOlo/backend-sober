@@ -112,25 +112,34 @@ module.exports = {
 
     async signin(req, res) {
         const {email, password, is_remember} = req.body;
-        // const {token_remember} = req.cookies;
+        const token_remember = req.cookies ? req.cookies.token_remember : null;
 
-        // if (token_remember !== undefined) {
-        //     try {
-        //         const decoded = jwt.verify(token_remember, process.env.JWT_SECRET);
-        //         const user = await ec_customer.findOne({
-        //             where: {
-        //                 id: decoded.id
-        //             }
-        //         });
+        if (token_remember) {
+            try {
+                const decoded = jwt.verify(token_remember, process.env.JWT_SECRET);
+                const user = await ec_customer.findOne({
+                    where: {
+                        id: decoded.id
+                    }
+                });
 
-        //         if (user) {
-        //             const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: '1d'}, { algorithm: 'RS256' });
-        //             return res.status(200).json({message: 'Login success', token: token});
-        //         }
-        //     } catch(e) {
-        //         return res.status(500).json({message: e.message});
-        //     }
-        // }
+                if (user) {
+                    const token = jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1d'}, { algorithm: 'RS256' });
+                    return res.status(200).json({message: 'Login success using cookies', token: token});
+                }
+                if (!user) {
+                    return res.status(401).json({message: 'Unauthorized, user not found'});
+                }
+            } catch(e) {
+                if (e instanceof jwt.JsonWebTokenError) {
+                    return res.status(401).json({message: 'Unauthorized, token invalid'});
+                } else if (e instanceof jwt.TokenExpiredError) {
+                    return res.status(401).json({message: 'Unauthorized, token expired'});
+                } else {
+                    return res.status(401).json({message: 'Unauthorized, internal error'});
+                }
+            }
+        }
 
         try {
             if (email === '' || password === '') {
@@ -149,26 +158,39 @@ module.exports = {
         if (!user) {
             return res.status(400).json({message: 'Email not found'});
         }
-
         if (is_remember) {
+            const tokens = jwt.sign({id: user.id, email: email}, process.env.JWT_SECRET, {expiresIn: '7d'});
             await ec_customer.update({
-                remember_token: jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: '7d'})
+                remember_token: tokens
             }, {
                 where: {
                     id: user.id
                 }
             });
-        }
-        try {
-            if (await bcrypt.compare(password, user.password)) {
-                const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: '1d'});
-                return res.status(200).json({message: 'Login success', status: 200, token: token});
-            } else {
-                return res.status(400).json({message: 'Password not match'});
+            try {
+                if (await bcrypt.compare(password, user.password)) {
+                    const token = jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1d'});
+                    res.cookie('token_remember', tokens, {maxAge: 604800000, httpOnly: true, path: '/api/auth/signin'});
+                    return res.status(200).json({message: 'Login success and send cookies', status: 200,email: user.email, token: token});
+                } else {
+                    return res.status(400).json({message: 'Password not match', status: 400});
+                }
+            } catch (e) {
+                return res.status(500).json({message: e.message});
             }
-        } catch (e) {
-            return res.status(500).json({message: e.message});
+        } else {
+            try {
+                if (await bcrypt.compare(password, user.password)) {
+                    const token = jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1d'});
+                    return res.status(200).json({message: 'Login success', status: 200,email: user.email, token: token});
+                } else {
+                    return res.status(400).json({message: 'Password not match', status: 400});
+                }
+            } catch (e) {
+                return res.status(500).json({message: e.message});
+            }
         }
+        
 
     },
 

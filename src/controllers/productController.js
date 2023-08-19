@@ -1,4 +1,19 @@
-const {ec_product_categories, ec_products, Sequelize} = require('../models');
+const {
+    ec_product_categories, 
+    ec_products, 
+    Sequelize,
+    ec_product_categories1,
+    ec_product_categories2,
+    ec_product_categories3,
+    ec_product_attribute_sets_translations,
+    ec_product_attribute_sets,
+    ec_product_attributes_translations,
+    ec_product_attributes,
+    ec_product_categories_translations,
+    ec_product_category_product,
+    ec_product_etalase,
+    ec_product_translations
+} = require('../models');
 const Op = Sequelize.Op;
 
 module.exports = {
@@ -52,8 +67,9 @@ module.exports = {
                     }
                 ]
                 },
-                limit: +limit,
-                offset: +offset
+                limit: parseInt(limit),
+                offset: offset,
+                include: {all: true}
             });
             return res.status(200).json({
                 status: 200,
@@ -76,7 +92,8 @@ module.exports = {
             const product = await ec_products.findOne({
                 where: {
                     id: id
-                }
+                },
+                include: {all: true}
             });
             if (!product) {
                 return res.status(404).json({
@@ -100,5 +117,38 @@ module.exports = {
             });
         }   
     },
+
+    async deleteProduct(req, res) {
+        const {id} = req.params;
+        try {
+            const product = await ec_products.findOne({
+                where: {
+                    id: id
+                }
+            });
+            if (!product) {
+                return res.status(404).json({
+                    status: 404,
+                    message: 'Product Not Found',
+                    data: {}
+                });
+            } else {
+                await product.destroy();
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success Delete Product',
+                    data: {}
+                });
+            }
+        }
+        catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
+        }   
+    },
+
 }
         

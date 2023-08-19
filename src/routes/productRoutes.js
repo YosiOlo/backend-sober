@@ -7,6 +7,7 @@ const productController = require("../controllers/productController");
 productRoutes.get("/categories", productController.listProductCategories);
 productRoutes.get("/", productController.listProducts);
 productRoutes.get("/:id", productController.detailProduct);
+productRoutes.delete("/:id", productController.deleteProduct);
 
 
 
