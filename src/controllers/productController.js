@@ -1,3 +1,4 @@
+const { where } = require('sequelize');
 const {
     ec_product_categories, 
     ec_products, 
@@ -23,14 +24,25 @@ module.exports = {
         search = req.query.search || '';
         offset = (page - 1) * limit;
         try {
-            const productCategories = await ec_product_categories.findAndCountAll({
+            const productCategories = await ec_product_categories1.findAndCountAll({
                 where: {
-                    name: {
-                        [Op.like]: `%${search}%`
+                    [Op.and] : {
+                        name: {
+                            [Op.like]: `%${search}%`
+                        },
+                        is_featured: 1         
                     }
                 },
                 limit: +limit,
-                offset: +offset
+                offset: +offset,
+                include: [{
+                    model: ec_product_categories2,
+                    as: 'category_child_1',
+                    include: [{
+                        model: ec_product_categories3,
+                        as: 'category_child_2',
+                    }]
+                }]
             });
             return res.status(200).json({
                 status: 200,

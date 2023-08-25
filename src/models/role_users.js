@@ -21,6 +21,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'role_users',
+    createdAt: 'created_at',
+    
   });
   return role_users;
 };

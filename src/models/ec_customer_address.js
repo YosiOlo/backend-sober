@@ -30,7 +30,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ec_customer_address',
-    timestamps: false
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
   return ec_customer_address;
 };

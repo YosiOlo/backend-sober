@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ec_customer_password_reset',
-    timestamps: false
+    createdAt: 'created_at',
   });
   return ec_customer_password_reset;
 };

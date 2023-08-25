@@ -1,4 +1,4 @@
-const {ec_customer, Sequelize} = require('../models');
+const {ec_customer, Sequelize, users} = require('../models');
 const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -6,11 +6,12 @@ const NodeMailer = require('nodemailer');
 
 module.exports = {
     async forgotPassword(req, res) {
-        const {email} = req.body;
+        const {password, repassword, oldpassword} = req.body;
+        const {id} = req.user;
 
         try {
-            if (email === '') {
-                return res.status(400).json({message: 'Please fill all field'});
+            if (password !== repassword) {
+                return res.status(400).json({message: 'Password not match'});
             }
         } catch (e) {
             return res.status(500).json({message: e.message});
@@ -18,38 +19,28 @@ module.exports = {
 
         const user = await ec_customer.findOne({
             where: {
-                email: email
+                id: id
             }
         });
 
-        if (!user) {
-            return res.status(400).json({message: 'Email not found'});
+        const compare = await bcrypt.compare(oldpassword, user.password);
+
+        if (!compare) {
+            return res.status(400).json({message: 'Old password not match'});
         }
 
-        const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: '1d'});
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
 
-        const transporter = NodeMailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.EMAIL_PASSWORD
+        await ec_customer.update({
+            password: hash
+        }, {
+            where: {
+                id: id
             }
         });
 
-        const mailOptions = {
-            from: process.env.EMAIL,
-            to: email,
-            subject: 'Reset Password',
-            html: `<p>Click this link to reset your password <a href="${process.env.CLIENT_URL}/reset-password/${token}">Reset Password</a></p>`
-        };
-
-        transporter.sendMail(mailOptions, (err, info) => {
-            if (err) {
-                return res.status(500).json({message: err.message});
-            } else {
-                return res.status(200).json({message: 'Email sent'});
-            }
-        });
+        return res.status(200).json({message: 'Password updated'});
     },
 
     async updateProfile(req, res) {
@@ -131,5 +122,60 @@ module.exports = {
         });
 
         return res.status(200).json(user);
+    },
+
+    //admin
+    async addAdmin(req, res) {
+        const {first_name, last_name, username, email, password, repassword} = req.body;
+
+        if (password !== repassword) {
+            return res.status(400).json({message: 'Password not match'});
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+
+        await users.create({
+            username: username,
+            email: email,
+            password: hash,
+            super_user: 1,
+            manage_supers: 1
+        });
+
+        return res.status(200).json({message: 'Admin created'});
+    },
+
+    async updateProfileAdmin(req, res) {
+        const {id} = req.user;
+        const {first_name, last_name, username, email} = req.body;
+
+        if (id === '' || id === undefined) {
+            return res.status(400).json({message: 'Please fill id field'});
+        }
+
+        const user = await users.findOne({
+            where: {
+                id: id
+            }
+        });
+
+        if (!user) {
+            return res.status(400).json({message: 'User not found'});
+        }
+
+        await users.update({
+            first_name: first_name,
+            last_name: last_name,
+            username: username,
+            email: email
+        }, {
+            where: {
+                id: id
+            }
+        });
+
+        return res.status(200).json({message: 'Profile updated'});
     }
+
 }

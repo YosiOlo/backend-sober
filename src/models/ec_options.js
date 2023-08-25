@@ -25,6 +25,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ec_options',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
   return ec_options;
 };

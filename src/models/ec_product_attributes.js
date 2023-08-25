@@ -27,6 +27,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ec_product_attributes',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
   return ec_product_attributes;
 };

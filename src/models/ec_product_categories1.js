@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       ec_product_categories1.hasMany(models.ec_products, {foreignKey: 'kategori1'})
+      ec_product_categories1.hasMany(models.ec_product_categories2, {foreignKey: 'parent_id', as: 'category_child_1'})
     }
   }
   ec_product_categories1.init({
@@ -27,8 +28,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ec_product_categories1',
-    timestamps: false,
-    tableName: 'ec_product_categories1'
+    tableName: 'ec_product_categories1',
+    updatedAt: 'updated_at',
+    createdAt: 'created_at'
   });
   return ec_product_categories1;
 };

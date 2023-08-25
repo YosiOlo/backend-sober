@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ec_customer_recently_viewed_product',
-    timestamps: false
+    timestamps: false,
   });
   return ec_customer_recently_viewed_product;
 };

@@ -29,6 +29,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'audit_history',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
   return audit_history;
 };

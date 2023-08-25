@@ -28,6 +28,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ec_product_attribute_sets',
+    updatedAt: 'updated_at',
+    createdAt: 'created_at'
   });
   return ec_product_attribute_sets;
 };
