@@ -103,7 +103,7 @@ module.exports = {
             },
             limit: parseInt(limit),
             offset: offset,
-            include: ['customer_address', 'customer_paket', 'customer_recently_viewed_product']
+            include: ['customer_address', 'customer_paket', 'customer_recently_viewed_product', 'store']
         });
 
         return res.status(200).json(
@@ -176,6 +176,41 @@ module.exports = {
         });
 
         return res.status(200).json({message: 'Profile updated'});
-    }
+    },
+
+    async updateCustomerProfile(req, res) {
+        const {id} = req.user;
+        const {fullname, dateofbirth, phone} = req.body;
+        
+        //image upload path
+        const image_link = req.files['image_link'];
+
+        if (id === '' || id === undefined) {
+            return res.status(400).json({message: 'Please fill id field'});
+        }
+
+        const user = await ec_customer.findOne({
+            where: {
+                id: id
+            }
+        });
+
+        if (!user) {
+            return res.status(400).json({message: 'User not found'});
+        }
+
+        await ec_customer.update({
+            fullname: fullname,
+            dateofbirth: dateofbirth,
+            phone: phone,
+            avatar: image_link[0].path
+        }, {
+            where: {
+                id: id
+            }
+        });
+
+        return res.status(200).json({message: 'Profile updated'});
+    },
 
 }

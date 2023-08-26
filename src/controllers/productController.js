@@ -162,5 +162,30 @@ module.exports = {
         }   
     },
 
+    async vendorProducts(req, res) {
+        const storeId = req.user;
+
+        try {
+            const products = await ec_products.findAndCountAll({
+                where: {
+                    store_id: storeId
+                },
+                include: {all: true}
+            });
+            return res.status(200).json({
+                status: 200,
+                message: 'Success Get Products',
+                data: products
+            });
+        }
+        catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
+        }
+    },
+
 }
         

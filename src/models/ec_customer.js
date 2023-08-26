@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       ec_customer.hasMany(models.ec_customer_password_reset, { foreignKey: 'email', as: 'customer_password_reset' });
       ec_customer.hasMany(models.ec_customer_paket, { foreignKey: 'user_id', as: 'customer_paket' });
       ec_customer.hasMany(models.ec_customer_recently_viewed_product, { foreignKey: 'customer_id', as: 'customer_recently_viewed_product' });
+      ec_customer.hasOne(models.mp_stores, { foreignKey: 'customer_id', as: 'store' })
     }
   }
   ec_customer.init({
