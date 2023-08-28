@@ -13,5 +13,6 @@ transactionRoutes.post('/user', authMiddleware.verifyToken)
 
 //vendor
 transactionRoutes.get('/vendor', authMiddleware.verifyVendor, transactionController.getVendor);
+transactionRoutes.get('/vendor/returns', authMiddleware.verifyVendor, transactionController.orderReturn);
 
 module.exports = transactionRoutes;

@@ -163,8 +163,7 @@ module.exports = {
     },
 
     async vendorProducts(req, res) {
-        const storeId = req.user;
-
+        const storeId = req.user.dataValues.store.dataValues.id;
         try {
             const products = await ec_products.findAndCountAll({
                 where: {

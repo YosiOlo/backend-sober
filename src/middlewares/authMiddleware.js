@@ -52,7 +52,8 @@ module.exports = {
             const user = await ec_customer.findOne({
                 where: {
                     id: decoded.id
-                }
+                },
+                include: ['store']
             });
 
             if (!user) {
@@ -62,7 +63,6 @@ module.exports = {
             if (!user.is_vendor) {
                 return res.status(401).json({message: 'Unauthorized'});
             }
-            console.log(user)
             req.user = user;
             next();
         } catch (e) {

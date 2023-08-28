@@ -1,4 +1,4 @@
-const {ec_orders, Sequelize} = require('../models');
+const {ec_orders, ec_order_returns, Sequelize , ec_order_product} = require('../models');
 const Op = Sequelize.Op;
 const {v4: uuidv4} = require('uuid');
 const bcrypt = require('bcrypt');
@@ -50,14 +50,15 @@ module.exports = {
     },
 
     async getVendor(req, res) {
-        const vendorId = req.user.id
+        const vendorId = req.user.dataValues.store.dataValues.id;
+
         page = req.query.page || 1;
         limit = req.query.limit || 20;
         offset = (page - 1) * limit;
 
         try {
             const trans = await ec_orders.findAndCountAll({
-                where: {customer_id: vendorId},
+                where: {store_id: vendorId},
                 limit: parseInt(limit),
                 offset: offset,
                 order: [
@@ -125,5 +126,41 @@ module.exports = {
         } catch (e) {
             return res.status(500).json({status: 500, message: e.message});
         }
-    }
+    },
+
+    async orderReturn(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+
+        page = req.query.page || 1;
+        limit = req.query.limit || 20;
+        offset = (page - 1) * limit;
+
+        try {
+            const returns = await ec_order_returns.findAndCountAll({
+                where: {store_id: storeId},
+                limit: parseInt(limit),
+                offset: offset,
+                order: [
+                    ['created_at', 'DESC']
+                ],
+                include: [{
+                    model: ec_orders,
+                }]
+            });
+            return res.status(200).json({
+                status: 200,
+                message: 'Success Get Returns',
+                data: returns
+            });
+
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
+        }
+
+    },
+
 }

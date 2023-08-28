@@ -10,7 +10,7 @@ productRoutes.get("/:id", productController.detailProduct);
 productRoutes.delete("/:id", productController.deleteProduct);
 
 //vendor
-productRoutes.post("/list-vendor", authMiddleware.verifyVendor, productController.vendorProducts);
+productRoutes.get("/vendor/list", authMiddleware.verifyVendor, productController.vendorProducts);
 
 
 module.exports = productRoutes;
