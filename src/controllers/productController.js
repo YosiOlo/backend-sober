@@ -164,12 +164,37 @@ module.exports = {
 
     async vendorProducts(req, res) {
         const storeId = req.user.dataValues.store.dataValues.id;
+
+        page = req.query.page || 1;
+        limit = req.query.limit || 10;
+        search = req.query.search || '';
+        offset = (page - 1) * limit;
+
         try {
             const products = await ec_products.findAndCountAll({
                 where: {
-                    store_id: storeId
+                    [Op.and]: [
+                        {
+                            [Op.or]: [
+                                {
+                                    name: {
+                                        [Op.like]: `%${search}%`
+                                    },
+                                },{
+                                    description: {
+                                        [Op.like]: `%${search}%`
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            store_id: storeId
+                        }
+                    ]
                 },
-                include: {all: true}
+                include: {all: true},
+                limit: parseInt(limit),
+                offset: offset
             });
             return res.status(200).json({
                 status: 200,
@@ -185,6 +210,5 @@ module.exports = {
             });
         }
     },
-
 }
         
