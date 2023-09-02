@@ -82,4 +82,18 @@ module.exports = {
         }
     },
 
+    async updateDiscount(req, res) {
+        const {title, code, start_date, end_date, quantity, value, type, can_use_with_promotion, discount_on, product_quantity, type_option, target, min_order_price, store_id} = req.body;
+        try {
+            const discount = await ec_discount.findByPk(req.params.id);
+            if (discount === null) {
+                return res.status(404).json({message: 'Discount Not Found', status: 404});
+            } else {
+                await discount.update({title, code, start_date, end_date, quantity, value, type, can_use_with_promotion, discount_on, product_quantity, type_option, target, min_order_price, store_id});
+                return res.status(200).json({message: 'Success', status: 200 ,data: discount});
+            }
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
+    }
 };

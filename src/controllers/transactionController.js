@@ -1,4 +1,4 @@
-const {ec_orders, ec_order_returns, Sequelize , ec_order_product} = require('../models');
+const {ec_orders, ec_order_returns, Sequelize , ec_order_product, member_withdrawal} = require('../models');
 const Op = Sequelize.Op;
 const {v4: uuidv4} = require('uuid');
 const bcrypt = require('bcrypt');
@@ -32,7 +32,7 @@ module.exports = {
                 order: [
                     ['created_at', 'DESC']
                 ],
-                include: ['order_addresses','order_histories', 'order_product', 'order_referrals', 'order_returns']
+                include: ['order_addresses','order_histories', 'order_product', 'order_referrals', 'order_returns', 'customer_order']
             });
             return res.status(200).json({
                 status: 200,
@@ -163,4 +163,62 @@ module.exports = {
 
     },
 
+    async vendorRevenue(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+
+        try {
+            const revenue = await ec_orders.findAll({
+                where: {
+                    [Op.and]: [
+                        {store_id: storeId},
+                        {status: 'completed'}
+                    ]
+                }
+            });
+            return res.status(200).json({
+                status: 200,
+                message: 'Success Get Revenue',
+                data: revenue
+            });
+
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
+        }
+
+    },
+
+    async vendorWithdrawal(req, res) {
+        const userId = req.user.id
+
+        page = req.query.page || 1;
+        limit = req.query.limit || 20;
+        offset = (page - 1) * limit;
+
+        try {
+            const withdrawal = await member_withdrawal.findAndCountAll({
+                where: {customer_id: userId},
+                limit: parseInt(limit),
+                offset: offset,
+                order: [
+                    ['created_at', 'DESC']
+                ]
+            });
+            return res.status(200).json({
+                status: 200,
+                message: 'Success Get Withdrawal',
+                data: withdrawal
+            });
+
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
+        }
+    },
 }

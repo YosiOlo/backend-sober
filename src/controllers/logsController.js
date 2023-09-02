@@ -15,17 +15,17 @@ module.exports = {
                     [Op.or]: [
                         {
                             action: {
-                                [Op.like]: `%${search}%`
+                                [Op.iLike]: `%${search}%`
                             }
                         },
                         {
                             type: {
-                                [Op.like]: `%${search}%`
+                                [Op.iLike]: `%${search}%`
                             }
                         },
                         {
                             reference_name: {
-                                [Op.like]: `%${search}`
+                                [Op.iLike]: `%${search}`
                             }
                         }]
                 },

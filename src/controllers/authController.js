@@ -7,7 +7,7 @@ const { reset } = require('nodemon');
 
 module.exports = {
     async signup(req, res) {
-        const {nama, email, password, repassword, referral, is_vendor} = req.body;
+        const {nama, email, password, repassword, referral, is_vendor, tier} = req.body;
 
         try {
             if (nama === '' || email === '' || password === '' || repassword === '') {
@@ -43,10 +43,11 @@ module.exports = {
                 status: "disabled",
                 avatar: 'https://res.cloudinary.com/dkxt6mlnh/image/upload/v1682927959/drown/images-removebg-preview_nmbyo7.png',
                 is_vendor: is_vendor,
-                referral: referral,
+                commissions_referral: referral,
                 email_verify_token: token,
                 created_at: new Date(),
                 updated_at: new Date(),
+                level: tier ? tier : null
             });
 
             const transporter = NodeMailer.createTransport({
@@ -320,6 +321,7 @@ module.exports = {
             email: data.email,
             message: 'Token valid',
             is_valid: data.exp > Date.now() / 1000,
+            is_vendor: data.user.dataValues.is_vendor
         });
     },
 

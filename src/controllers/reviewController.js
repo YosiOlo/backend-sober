@@ -12,16 +12,8 @@ module.exports = {
                 where: {
                     [Op.or]: [
                     {
-                        name: {
-                            [Op.like]: `%${search}%`
-                        },
-                    },{
-                        email: {
-                            [Op.like]: `%${search}%`
-                        },
-                    },{
-                        review: {
-                            [Op.like]: `%${search}%`
+                        comment: {
+                            [Op.iLike]: `%${search}%`
                         },
                     }
                     ]

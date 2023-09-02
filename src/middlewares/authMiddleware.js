@@ -12,7 +12,7 @@ module.exports = {
         try {
             token = token.replace('Bearer ', '');
         } catch (e) {
-            return res.status(401).json({message: 'Unauthorized'});
+            return res.status(401).json({message: 'Unauthorized, invalid token'});
         }
 
         try {
@@ -24,7 +24,7 @@ module.exports = {
             });
 
             if (!user) {
-                return res.status(401).json({message: 'Unauthorized'});
+                return res.status(401).json({message: 'Unauthorized, please register first'});
             }
 
             req.user = {user,...decoded};
@@ -44,7 +44,7 @@ module.exports = {
         try {
             token = token.replace('Bearer ', '');
         } catch (e) {
-            return res.status(401).json({message: 'Unauthorized'});
+            return res.status(401).json({message: 'Unauthorized, invalid token'});
         }
 
         try {
@@ -57,11 +57,15 @@ module.exports = {
             });
 
             if (!user) {
-                return res.status(401).json({message: 'Unauthorized'});
+                return res.status(401).json({message: 'Unauthorized, please register first'});
             }
 
             if (!user.is_vendor) {
-                return res.status(401).json({message: 'Unauthorized'});
+                return res.status(401).json({message: 'Unauthorized, please register as vendor first'});
+            }
+
+            if (user.store == null) {
+                return res.status(401).json({message: 'Unauthorized, please register your store first'});
             }
             req.user = user;
             next();
@@ -80,7 +84,7 @@ module.exports = {
         try {
             token = token.replace('Bearer ', '');
         } catch (e) {
-            return res.status(401).json({message: 'Unauthorized'});
+            return res.status(401).json({message: 'Unauthorized, invalid token'});
         }
 
         try {
@@ -92,7 +96,7 @@ module.exports = {
             });
 
             if (!admin) {
-                return res.status(401).json({message: 'Unauthorized'});
+                return res.status(401).json({message: 'Unauthorized, user not admin'});
             }
 
             req.user = {admin};

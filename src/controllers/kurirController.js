@@ -12,7 +12,7 @@ module.exports = {
             const branchs = await jne_branchs.findAndCountAll({
                 where: {
                     branch_name: {
-                        [Op.like]: `%${search}%`
+                        [Op.iLike]: `%${search}%`
                     }
                 },
                 limit: parseInt(limit),
@@ -41,7 +41,7 @@ module.exports = {
             const origins = await jne_origins.findAndCountAll({
                 where: {
                     origin_name: {
-                        [Op.like]: `%${search}%`
+                        [Op.iLike]: `%${search}%`
                     }
                 },
                 limit: parseInt(limit),
@@ -70,7 +70,7 @@ module.exports = {
             const destinations = await jne_destinations.findAndCountAll({
                 where: {
                     destination_name: {
-                        [Op.like]: `%${search}%`
+                        [Op.iLike]: `%${search}%`
                     }
                 },
                 limit: parseInt(limit),

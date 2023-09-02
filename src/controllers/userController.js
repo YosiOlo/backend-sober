@@ -81,34 +81,38 @@ module.exports = {
 
         const offset = page * limit - limit;
 
-        const customers = await ec_customer.findAndCountAll({
-            where: {
-                [Op.or]: [
-                    {
-                        name: {
-                            [Op.like]: `%${search}%`
+        try {
+            const customers = await ec_customer.findAndCountAll({
+                where: {
+                    [Op.or]: [
+                        {
+                            name: {
+                                [Op.iLike]: `%${search}%`
+                            }
+                        },
+                        {
+                            email: {
+                                [Op.iLike]: `%${search}%`
+                            }
+                        },
+                        {
+                            phone: {
+                                [Op.iLike]: `%${search}%`
+                            }
                         }
-                    },
-                    {
-                        email: {
-                            [Op.like]: `%${search}%`
-                        }
-                    },
-                    {
-                        phone: {
-                            [Op.like]: `%${search}%`
-                        }
-                    }
-                ]
-            },
-            limit: parseInt(limit),
-            offset: offset,
-            include: ['customer_address', 'customer_paket', 'customer_recently_viewed_product', 'store']
-        });
-
-        return res.status(200).json(
-            customers
-        );
+                    ]
+                },
+                limit: parseInt(limit),
+                offset: offset,
+                include: ['customer_address', 'customer_paket', 'customer_recently_viewed_product', 'store', 'customer_review', 'customer_tier']
+            });
+    
+            return res.status(200).json(
+                customers
+            );
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
     },
 
     async currentUser(req, res) {

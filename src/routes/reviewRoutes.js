@@ -4,8 +4,8 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 reviewRoutes.get('/', reviewController.listReviews);
 reviewRoutes.get('/:id', reviewController.detailReview);
-reviewRoutes.post('/', reviewController.createReview);
-reviewRoutes.delete('/:id', reviewController.deleteReview);
-reviewRoutes.put('/:id', reviewController.updateReview);
+reviewRoutes.post('/', authMiddleware.verifyToken, reviewController.createReview);
+reviewRoutes.delete('/:id', authMiddleware.verifyAdmin, reviewController.deleteReview);
+reviewRoutes.put('/:id', authMiddleware.verifyToken, reviewController.updateReview);
 
 module.exports = reviewRoutes;

@@ -1,0 +1,1238 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0",
+      "title": "sobermart",
+      "contact": {}
+    },
+    "host": "kuro.asrofur.me",
+    "basePath": "/sober/api",
+    "securityDefinitions": {},
+    "schemes": [
+      "https"
+    ],
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ],
+    "paths": {
+      "/{main}{auth}/signin": {
+        "post": {
+          "summary": "SignIn",
+          "tags": [
+            "Auth"
+          ],
+          "operationId": "SignIn",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "consumes": [
+            "application/x-www-form-urlencoded"
+          ],
+          "parameters": [
+            {
+              "name": "email",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "auth",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          },
+          "security": []
+        }
+      },
+      "/{main}{auth}/signup": {
+        "post": {
+          "summary": "SignUp",
+          "tags": [
+            "Auth"
+          ],
+          "operationId": "SignUp",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "consumes": [
+            "application/x-www-form-urlencoded"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "nama",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "email",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "repassword",
+              "in": "formData",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "referral",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "auth",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      },
+      "/{main}{auth}/check": {
+        "get": {
+          "summary": "CheckToken",
+          "tags": [
+            "Auth"
+          ],
+          "operationId": "CheckToken",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "auth",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          },
+          "security": []
+        }
+      },
+      "/{main}{auth}/sendreset": {
+        "post": {
+          "summary": "SendResetEmail",
+          "tags": [
+            "Auth"
+          ],
+          "operationId": "SendResetEmail",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "consumes": [
+            "application/x-www-form-urlencoded"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "email",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "auth",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      },
+      "/{main}{user}/admin/add-admin": {
+        "post": {
+          "summary": "AddAdmin",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "AddAdmin",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "consumes": [
+            "application/x-www-form-urlencoded"
+          ],
+          "parameters": [
+            {
+              "name": "first_name",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "last_name",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "username",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "email",
+              "in": "formData",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "repassword",
+              "in": "formData",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "user",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          },
+          "security": []
+        }
+      },
+      "/{main}{user}/admin/list": {
+        "get": {
+          "summary": "list user",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "listuser",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "search",
+              "in": "query",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "page",
+              "in": "query",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "user",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          },
+          "security": []
+        }
+      },
+      "/{main}{user}/admin/update": {
+        "post": {
+          "summary": "updateProfile",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "updateProfile",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "user",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      },
+      "/{main}/transaction/admin": {
+        "get": {
+          "summary": "GetAllTrans",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "GetAllTrans",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      },
+      "/{main}/product": {
+        "get": {
+          "summary": "GetAllProducts",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "GetAllProducts",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "search",
+              "in": "query",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "page",
+              "in": "query",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        },
+        "post": {
+          "summary": "PostProduct",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "PostProduct",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          },
+          "security": []
+        }
+      },
+      "/{main}/product/1": {
+        "get": {
+          "summary": "GetProductsById",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "GetProductsById",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        },
+        "put": {
+          "summary": "UpdateProduct",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "UpdateProduct",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        },
+        "delete": {
+          "summary": "DeleteProduct",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "DeleteProduct",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          },
+          "security": []
+        }
+      },
+      "/{main}/product/categories": {
+        "get": {
+          "summary": "GetProductCategory",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "GetProductCategory",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      },
+      "/": {
+        "get": {
+          "summary": "GetAllReview",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "GetAllReview",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        },
+        "delete": {
+          "summary": "DeleteReview",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "DeleteReview",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        },
+        "put": {
+          "summary": "UpdateShipment",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "UpdateShipment",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        },
+        "post": {
+          "summary": "UpdateProfile",
+          "tags": [
+            "User"
+          ],
+          "operationId": "UpdateProfile",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      },
+      "/{main}/shipment/admin": {
+        "get": {
+          "summary": "GetAllShipment",
+          "tags": [
+            "Admin"
+          ],
+          "operationId": "GetAllShipment",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "page",
+              "in": "query",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "search",
+              "in": "query",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      },
+      "/{main}{user}/change-pw": {
+        "post": {
+          "summary": "ForgotPassword",
+          "tags": [
+            "User"
+          ],
+          "operationId": "ForgotPassword",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "consumes": [
+            "application/x-www-form-urlencoded"
+          ],
+          "parameters": [
+            {
+              "name": "repassword",
+              "in": "formData",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "oldpassword",
+              "in": "formData",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "user",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          },
+          "security": []
+        }
+      },
+      "/{main}/transaction/vendor": {
+        "get": {
+          "summary": "GetTransVendor",
+          "tags": [
+            "Vendor"
+          ],
+          "operationId": "GetTransVendor",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          },
+          "security": []
+        }
+      },
+      "/{main}/transaction/vendor/returns": {
+        "get": {
+          "summary": "OrderReturn",
+          "tags": [
+            "Vendor"
+          ],
+          "operationId": "OrderReturn",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "page",
+              "in": "query",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          },
+          "security": []
+        }
+      },
+      "/{main}/product/vendor/list": {
+        "get": {
+          "summary": "ItemsVendor",
+          "tags": [
+            "Vendor"
+          ],
+          "operationId": "ItemsVendor",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "name",
+              "in": "query",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "required": true,
+              "type": "integer",
+              "format": "int32",
+              "description": ""
+            },
+            {
+              "name": "search",
+              "in": "query",
+              "required": true,
+              "type": "string",
+              "description": ""
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          },
+          "security": []
+        }
+      },
+      "/{main}/currency": {
+        "get": {
+          "summary": "ListCurrency",
+          "tags": [
+            "Currencies"
+          ],
+          "operationId": "ListCurrency",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      },
+      "/{main}/currency/5": {
+        "get": {
+          "summary": "CurrencyById",
+          "tags": [
+            "Currencies"
+          ],
+          "operationId": "CurrencyById",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      },
+      "/{main}/discount": {
+        "get": {
+          "summary": "ListDiscount",
+          "tags": [
+            "Discount"
+          ],
+          "operationId": "ListDiscount",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      },
+      "/{main}/discount/1": {
+        "get": {
+          "summary": "Discount By Id",
+          "tags": [
+            "Discount"
+          ],
+          "operationId": "DiscountById",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      },
+      "/{main}/discount/valid": {
+        "get": {
+          "summary": "still valid discount",
+          "tags": [
+            "Discount"
+          ],
+          "operationId": "stillvaliddiscount",
+          "deprecated": false,
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": false,
+              "default": "Bearer {token}",
+              "type": "string"
+            },
+            {
+              "name": "main",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": ""
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "headers": {}
+            }
+          }
+        }
+      }
+    },
+    "security": [],
+    "tags": [
+      {
+        "name": "Auth"
+      },
+      {
+        "name": "Admin"
+      },
+      {
+        "name": "User"
+      },
+      {
+        "name": "cart"
+      },
+      {
+        "name": "Vendor"
+      },
+      {
+        "name": "User / Umum"
+      },
+      {
+        "name": "Currencies"
+      },
+      {
+        "name": "Discount"
+      }
+    ]
+  }

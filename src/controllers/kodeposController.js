@@ -15,27 +15,27 @@ module.exports = {
                     [Op.or]: [
                         {
                             kodepos: {
-                                [Op.like]: `%${search}%`
+                                [Op.iLike]: `%${search}%`
                             }
                         },
                         {
                             provinsi: {
-                                [Op.like]: `%${search}%`
+                                [Op.iLike]: `%${search}%`
                             }
                         },
                         {
                             kota: {
-                                [Op.like]: `%${search}%`
+                                [Op.iLike]: `%${search}%`
                             }
                         },
                         {
                             kecamatan: {
-                                [Op.like]: `%${search}%`
+                                [Op.iLike]: `%${search}%`
                             }
                         },
                         {
                             kelurahan: {
-                                [Op.like]: `%${search}%`
+                                [Op.iLike]: `%${search}%`
                             }
                         }
                     ]

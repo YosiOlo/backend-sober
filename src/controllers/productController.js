@@ -28,7 +28,7 @@ module.exports = {
                 where: {
                     [Op.and] : {
                         name: {
-                            [Op.like]: `%${search}%`
+                            [Op.iLike]: `%${search}%`
                         },
                         is_featured: 1         
                     }
@@ -70,11 +70,11 @@ module.exports = {
                     [Op.or]: [
                     {
                         name: {
-                            [Op.like]: `%${search}%`
+                            [Op.iLike]: `%${search}%`
                         },
                     },{
                         description: {
-                            [Op.like]: `%${search}%`
+                            [Op.iLike]: `%${search}%`
                         }
                     }
                 ]
@@ -178,11 +178,11 @@ module.exports = {
                             [Op.or]: [
                                 {
                                     name: {
-                                        [Op.like]: `%${search}%`
+                                        [Op.iLike]: `%${search}%`
                                     },
                                 },{
                                     description: {
-                                        [Op.like]: `%${search}%`
+                                        [Op.iLike]: `%${search}%`
                                     }
                                 }
                             ]
