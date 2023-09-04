@@ -16,9 +16,10 @@ module.exports = (sequelize, DataTypes) => {
       ec_orders.hasOne(models.ec_order_product, { foreignKey: 'order_id', as: 'order_product' });
       ec_orders.hasOne(models.ec_order_referrals, { foreignKey: 'order_id', as: 'order_referrals' });
       ec_orders.hasOne(models.ec_order_returns, { foreignKey: 'order_id', as: 'order_returns' });
-      ec_orders.hasOne(models.midtrans, { foreignKey: 'order_id', as: 'order_token'})
-      ec_orders.hasOne(models.ec_shipments, { foreignKey: 'order_id', as: 'order_shipments'})
-      ec_orders.belongsTo(models.ec_customer, { foreignKey: 'user_id', as: 'customer_order'})
+      ec_orders.hasOne(models.midtrans, { foreignKey: 'order_id', as: 'order_token'});
+      ec_orders.hasOne(models.ec_shipments, { foreignKey: 'order_id', as: 'order_shipments'});
+      ec_orders.belongsTo(models.ec_customer, { foreignKey: 'user_id', as: 'customer_order'});
+      ec_orders.belongsTo(models.payments , { foreignKey: 'payment_id', as: 'payment_order'});
     }
   }
   ec_orders.init({

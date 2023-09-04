@@ -64,7 +64,7 @@ module.exports = {
                 order: [
                     ['created_at', 'DESC']
                 ],
-                include: ['order_addresses','order_histories', 'order_product', 'order_referrals', 'order_returns']
+                include: ['order_addresses','order_histories', 'order_product', 'order_referrals', 'order_returns', 'payment_order']
             });
             return res.status(200).json({
                 status: 200,
