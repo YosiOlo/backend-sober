@@ -25,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ec_order_returns',
-    timestamps: false
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   });
   return ec_order_returns;
 };

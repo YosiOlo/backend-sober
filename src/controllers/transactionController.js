@@ -142,6 +142,7 @@ module.exports = {
                 ],
                 include: [{
                     model: ec_orders,
+                    include: ['order_product']
                 }]
             });
             return res.status(200).json({
@@ -170,7 +171,8 @@ module.exports = {
                         {store_id: storeId},
                         {status: 'completed'}
                     ]
-                }
+                },
+                include: ['customer_order','payment_order']
             });
             return res.status(200).json({
                 status: 200,
