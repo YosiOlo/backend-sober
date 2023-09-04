@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       ec_orders.hasOne(models.ec_order_addresses,{ foreignKey: 'order_id', as: 'order_addresses' });
-      ec_orders.hasOne(models.ec_order_histories,{ foreignKey: 'order_id', as: 'order_histories' });
+      ec_orders.hasMany(models.ec_order_histories,{ foreignKey: 'order_id', as: 'order_histories' });
       ec_orders.hasOne(models.ec_order_product, { foreignKey: 'order_id', as: 'order_product' });
       ec_orders.hasOne(models.ec_order_referrals, { foreignKey: 'order_id', as: 'order_referrals' });
       ec_orders.hasOne(models.ec_order_returns, { foreignKey: 'order_id', as: 'order_returns' });
