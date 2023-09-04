@@ -142,7 +142,7 @@ module.exports = {
                 ],
                 include: [{
                     model: ec_orders,
-                    include: ['order_product']
+                    include: ['customer_order','order_product']
                 }]
             });
             return res.status(200).json({
