@@ -322,7 +322,17 @@ module.exports = {
             message: 'Token valid',
             is_valid: data.exp > Date.now() / 1000,
             is_vendor: data.user.dataValues.is_vendor,
-            datas: data
+            datas: {
+                id: data.user.id,
+                name: data.user.name,
+                email: data.user.email,
+                avatar: data.user.avatar,
+                status: data.user.status,
+                is_vendor: data.user.is_vendor,
+                phone : data.user.phone,
+                is_active: data.user.is_active,
+                last_active: data.user.last_active,
+            }
         });
     },
 
