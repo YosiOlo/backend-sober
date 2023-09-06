@@ -134,6 +134,15 @@ module.exports = {
 
                 if (user) {
                     const token = jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1d'}, { algorithm: 'RS256' });
+                    //set is active
+                    await ec_customer.update({
+                        is_active: true,
+                        last_active: new Date()
+                    }, {
+                        where: {
+                            id: user.id
+                        }
+                    });
                     return res.status(200).json({message: 'Login success using cookies', token: token});
                 } else if (admin) {
                     const token = jwt.sign({id: admin.id, email: admin.email}, process.env.JWT_SECRET, {expiresIn: '1d'}, { algorithm: 'RS256' });
@@ -205,6 +214,15 @@ module.exports = {
             });
             try {
                 if (await bcrypt.compare(password, user.password)) {
+                    //set is active
+                    await ec_customer.update({
+                        is_active: true,
+                        last_active: new Date()
+                    }, {
+                        where: {
+                            id: user.id
+                        }
+                    });
                     const token = jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1d'});
                     res.cookie('token_remember', tokens, {maxAge: 604800000, httpOnly: true, path: '/sober/api/auth/signin'});
                     return res.status(200).json({message: 'Login success and send cookies', status: 200,email: user.email, token: token});
@@ -217,6 +235,15 @@ module.exports = {
         } else {
             try {
                 if (await bcrypt.compare(password, user.password)) {
+                    //set is active
+                    await ec_customer.update({
+                        is_active: true,
+                        last_active: new Date()
+                    }, {
+                        where: {
+                            id: user.id
+                        }
+                    });
                     const token = jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1d'});
                     return res.status(200).json({message: 'Login success', status: 200,email: user.email, token: token});
                 } else {
@@ -447,6 +474,28 @@ module.exports = {
         }
 
         return res.render("resetPassword.ejs", {token: token});
+    },
+
+    async logout(req, res) {
+        const data = req.user;
+
+        try {
+            if (data.user.dataValues.remember_token !== null) {
+                await ec_customer.update({
+                    remember_token: null,
+                    is_active: false,
+                    last_active: new Date()
+                }, {
+                    where: {
+                        id: data.user.id
+                    }
+                });
+            }
+    
+            return res.status(200).json({message: 'Logout success'});
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
     }
 
 }
