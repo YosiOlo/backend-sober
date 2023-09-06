@@ -321,7 +321,8 @@ module.exports = {
             email: data.email,
             message: 'Token valid',
             is_valid: data.exp > Date.now() / 1000,
-            is_vendor: data.user.dataValues.is_vendor
+            is_vendor: data.user.dataValues.is_vendor,
+            datas: data
         });
     },
 

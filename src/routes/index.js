@@ -1,6 +1,4 @@
 const mainRoutes = require("express").Router();
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
 
 const authRoutes = require("./authRoutes");
 const userRoutes = require("./userRoutes");
@@ -35,9 +33,5 @@ mainRoutes.use("/shipment", shipmentRoutes);
 //logs routes
 mainRoutes.use("/miscellaneous", miscRoutes);
 mainRoutes.use("/contact", contactRoutes);
-
-//docs
-mainRoutes.use('/docs', swaggerUi.serve);
-mainRoutes.get('/docs', swaggerUi.setup(swaggerDocument));
 
 module.exports = mainRoutes;
