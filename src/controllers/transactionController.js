@@ -1,4 +1,15 @@
-const {ec_orders, ec_order_returns, Sequelize , ec_order_product, member_withdrawal} = require('../models');
+const {
+    ec_orders, 
+    ec_order_returns, 
+    Sequelize , 
+    ec_order_product, 
+    member_withdrawal, 
+    ec_order_referrals, 
+    ec_order_histories, 
+    ec_order_addresses,
+    ec_shipments,
+    ec_shipment_histories,
+} = require('../models');
 const Op = Sequelize.Op;
 const {v4: uuidv4} = require('uuid');
 const bcrypt = require('bcrypt');
@@ -220,4 +231,228 @@ module.exports = {
             });
         }
     },
+
+    async vendorDestroy (req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {transId} = req.params
+
+        //check product is vendor product
+        try {
+            const order = await ec_orders.findOne({
+                where: {
+                    [Op.and]: [
+                        {store_id: storeId},
+                        {id: transId}
+                    ]
+                }
+            });
+
+            if (order === null) {
+                return res.status(404).json({message: 'Order Not Found / Unauthorized vendor order', status: 404});
+            } else {
+                //destroy relation
+                await ec_order_product.destroy({
+                    where: {
+                        order_id: transId
+                    }
+                });
+
+                await ec_order_returns.destroy({
+                    where: {
+                        order_id: transId
+                    }
+                });
+
+                await ec_order_referrals.destroy({
+                    where: {
+                        order_id: transId
+                    }
+                });
+
+                await ec_order_histories.destroy({
+                    where: {
+                        order_id: transId
+                    }
+                });
+
+                await ec_order_addresses.destroy({
+                    where: {
+                        order_id: transId
+                    }
+                });
+
+                await ec_orders.destroy({
+                    where: {
+                        id: transId
+                    }
+                });
+
+                return res.status(200).json({message: 'Success Delete Transaction', status: 200});
+            }
+        } catch (e) {
+            return res.status(500).json({status: 500, message: e.message});
+        }
+    },
+
+    async vendorUpdateOrderAddress (req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {transId} = req.params
+        let {name, phone, email, state, city, address, zip_code} = req.body
+
+        //check product is vendor product
+        try {
+            const order = await ec_orders.findOne({
+                where: {
+                    [Op.and]: [
+                        {store_id: storeId},
+                        {id: transId}
+                    ]
+                },
+                include: ['order_addresses']
+            });
+
+            if (order === null) {
+                return res.status(404).json({message: 'Order Not Found / Unauthorized vendor order', status: 404});
+            } else {
+                if (name.length === 0) {
+                    name = order.order_addresses.name
+                }
+                if (phone.length === 0) {
+                    phone = order.order_addresses.phone
+                }
+                if (email.length === 0) {
+                    email = order.order_addresses.email
+                }
+                if (state.length === 0) {
+                    state = order.order_addresses.state
+                }
+                if (city.length === 0) {
+                    city = order.order_addresses.city
+                }
+                if (address.length === 0) {
+                    address = order.order_addresses.address
+                }
+                if (zip_code.length === 0) {
+                    zip_code = order.order_addresses.zip_code
+                }
+
+                //update relation
+                await ec_order_addresses.update({
+                    name,
+                    phone,
+                    email,
+                    state,
+                    city,
+                    address,
+                    zip_code
+                }, {
+                    where: {
+                        order_id: transId
+                    }
+                });
+
+                return res.status(200).json({message: 'Success Update Transaction Address', status: 200});
+            }
+        }
+        catch (e) {
+            return res.status(500).json({status: 500, message: e.message});
+        }
+    },
+
+    async vendorUpdateNote (req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {transId} = req.params
+        const {note} = req.body
+
+        //check product is vendor product
+        try {
+            const order = await ec_orders.findOne({
+                where: {
+                    [Op.and]: [
+                        {store_id: storeId},
+                        {id: transId}
+                    ]
+                }
+            });
+
+            if (order === null) {
+                return res.status(404).json({message: 'Order Not Found / Unauthorized vendor order', status: 404});
+            } else {
+                //update relation
+                await ec_orders.update({
+                    description: note
+                }, {
+                    where: {
+                        id: transId
+                    }
+                });
+
+                return res.status(200).json({message: 'Success Update Transaction Note', status: 200});
+            }
+        }
+        catch (e) {
+            return res.status(500).json({status: 500, message: e.message});
+        }
+    },
+
+    async vendorUpdateShipment (req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {transId} = req.params
+        const {shipment_status} = req.body
+
+        //check product is vendor product
+        try {
+            const order = await ec_orders.findOne({
+                where: {
+                    [Op.and]: [
+                        {store_id: storeId},
+                        {id: transId}
+                    ]
+                }
+            });
+
+            if (order === null) {
+                return res.status(404).json({message: 'Order Not Found / Unauthorized vendor order', status: 404});
+            } else {
+                //update relation
+                await ec_orders.update({
+                    status: shipment_status
+                }, {
+                    where: {
+                        id: transId
+                    }
+                });
+
+                //check shipment
+                const shipment = await ec_shipments.findOne({
+                    where: {
+                        order_id: transId
+                    }
+                });
+
+                if (shipment) {
+                    await ec_shipments.update({
+                        status: shipment_status
+                    }, {
+                        where: {
+                            order_id: transId
+                        }
+                    });
+
+                    await ec_shipment_histories.create({
+                        action: 'update_status',
+                        description: `Changed status of shipping to: ${shipment_status}. Updated by: ${req.user.name}`,
+                        user_id: shipment.user_id,
+                        shipment_id: shipment.id,
+                        order_id: transId
+                    });
+                } 
+
+                return res.status(200).json({message: 'Success Update Transaction Shipment', status: 200});
+            }
+        }
+        catch (e) {
+            return res.status(500).json({status: 500, message: e.message});
+        }
+    }
 }

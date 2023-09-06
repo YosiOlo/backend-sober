@@ -8,7 +8,7 @@ shipmentRoutes.delete('/admin/:id', authMiddleware.verifyAdmin, shipmentControll
 shipmentRoutes.get('/', authMiddleware.verifyToken, shipmentController.userShipment)
 shipmentRoutes.get('/:id', authMiddleware.verifyToken, shipmentController.detailShipment)
 
-shipmentRoutes.get('/vendor', authMiddleware.verifyVendor, shipmentController.vendorShipment)
+shipmentRoutes.get('/vendor/list', authMiddleware.verifyVendor, shipmentController.vendorShipment)
 shipmentRoutes.get('/vendor/:id', authMiddleware.verifyVendor, shipmentController.detailShipment)
 shipmentRoutes.put('/vendor/:id', authMiddleware.verifyVendor, shipmentController.updateShipment)
 

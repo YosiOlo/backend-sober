@@ -16,5 +16,8 @@ transactionRoutes.get('/vendor', authMiddleware.verifyVendor, transactionControl
 transactionRoutes.get('/vendor/returns', authMiddleware.verifyVendor, transactionController.orderReturn);
 transactionRoutes.get('/vendor/revenue', authMiddleware.verifyVendor, transactionController.vendorRevenue);
 transactionRoutes.get('/vendor/withdrawal', authMiddleware.verifyVendor, transactionController.vendorWithdrawal);
+transactionRoutes.delete('/vendor/:transId', authMiddleware.verifyVendor, transactionController.vendorDestroy);
+transactionRoutes.put('/vendor/address/:transId', authMiddleware.verifyVendor, transactionController.vendorUpdateOrderAddress);
+transactionRoutes.put('/vendor/note/:transId', authMiddleware.verifyVendor, transactionController.vendorUpdateNote);
 
 module.exports = transactionRoutes;

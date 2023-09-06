@@ -83,10 +83,26 @@ module.exports = {
                 offset: offset,
                 include: {all: true}
             });
+            let arrays = [];
+            products.rows.map((product) => {
+                let images = []
+                const split = product.dataValues.images.split(',').map((image) => {
+                    //remove backslash, double quote, and square bracket
+                    image = image.replace(/\\/g, "").replace(/"/g, "").replace(/\[/g, "").replace(/\]/g, "");
+                    images.push(image);
+                });
+                arrays.push({
+                    ...product.dataValues,
+                    images: images
+                });
+            });
             return res.status(200).json({
                 status: 200,
                 message: 'Success Get Products',
-                data: products
+                data: {
+                    count: products.count,
+                    rows: arrays
+                }
             });
         }
         catch (error) {
@@ -114,10 +130,20 @@ module.exports = {
                     data: {}
                 });
             } else {
+                let images = []
+                const split = product.dataValues.images.split(',').map((image) => {
+                    //remove backslash, double quote, and square bracket
+                    image = image.replace(/\\/g, "").replace(/"/g, "").replace(/\[/g, "").replace(/\]/g, "");
+                    images.push(image);
+                });
+
                 return res.status(200).json({
                     status: 200,
                     message: 'Success Get Product',
-                    data: product
+                    data: {
+                        ...product.dataValues,
+                        images: images
+                    }
                 });
             }
         }
@@ -196,10 +222,27 @@ module.exports = {
                 limit: parseInt(limit),
                 offset: offset
             });
+            let arrays = [];
+            products.rows.map((product) => {
+                let images = []
+                const split = product.dataValues.images.split(',').map((image) => {
+                    //remove backslash, double quote, and square bracket
+                    image = image.replace(/\\/g, "").replace(/"/g, "").replace(/\[/g, "").replace(/\]/g, "");
+                    images.push(image);
+                });
+                arrays.push({
+                    ...product.dataValues,
+                    images: images
+                });
+            });
+
             return res.status(200).json({
                 status: 200,
                 message: 'Success Get Products',
-                data: products
+                data: {
+                    count: products.count,
+                    rows: arrays
+                }
             });
         }
         catch (error) {

@@ -95,5 +95,27 @@ module.exports = {
         } catch (e) {
             return res.status(500).json({message: e.message});
         }
+    },
+
+    async vendorDiscount(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        console.log(storeId);
+
+        try {
+            const discount = await ec_discount.findAll({
+                where: {store_id: storeId},
+                order: [
+                    ['created_at', 'DESC']
+                ]
+            });
+            if (discount.length < 1) {
+                return res.status(404).json({message: 'Vendor, Discount Not Found', status: 404});
+            } else {
+                return res.status(200).json({message: 'Success', status: 200 ,data: discount});
+            }
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
     }
+
 };

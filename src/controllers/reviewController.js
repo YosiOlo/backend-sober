@@ -167,5 +167,29 @@ module.exports = {
                 data: error
             });
         }   
-    }
+    },
+
+    async vendorReview(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+
+        try {
+            const reviews = await ec_reviews.findAll({
+                include: ['product', 'customer'],
+                where: {
+                    '$product.store_id$': storeId
+                }
+            });
+            return res.status(200).json({
+                status: 200,
+                message: 'Success Get Reviews',
+                data: reviews
+            });
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
+        }
+    }   
 }
