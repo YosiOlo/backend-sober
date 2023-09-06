@@ -44,8 +44,7 @@ module.exports = {
                                 {end_date: {[Op.gte]: new Date()}},
                                 {end_date: null}
                             ]
-                        },
-                        {quantity: {[Op.gt]: 0}}
+                        }
                     ]
                 },
                 order: [
