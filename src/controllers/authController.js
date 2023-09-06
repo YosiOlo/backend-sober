@@ -490,6 +490,15 @@ module.exports = {
                         id: data.user.id
                     }
                 });
+            } else {
+                await ec_customer.update({
+                    is_active: false,
+                    last_active: new Date()
+                }, {
+                    where: {
+                        id: data.user.id
+                    }
+                });
             }
     
             return res.status(200).json({message: 'Logout success'});
