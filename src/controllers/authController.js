@@ -136,7 +136,7 @@ module.exports = {
                     const token = jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1d'}, { algorithm: 'RS256' });
                     //set is active
                     await ec_customer.update({
-                        is_active: true,
+                        is_active: 1,
                         last_active: new Date()
                     }, {
                         where: {
@@ -216,7 +216,7 @@ module.exports = {
                 if (await bcrypt.compare(password, user.password)) {
                     //set is active
                     await ec_customer.update({
-                        is_active: true,
+                        is_active: 1,
                         last_active: new Date()
                     }, {
                         where: {
@@ -237,7 +237,7 @@ module.exports = {
                 if (await bcrypt.compare(password, user.password)) {
                     //set is active
                     await ec_customer.update({
-                        is_active: true,
+                        is_active: 1,
                         last_active: new Date()
                     }, {
                         where: {
