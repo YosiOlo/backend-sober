@@ -454,5 +454,72 @@ module.exports = {
         catch (e) {
             return res.status(500).json({status: 500, message: e.message});
         }
+    },
+
+    async updateVendorReturn (req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {returnId} = req.params
+        const {status} = req.body
+
+        //check product is vendor product
+        try {
+            const order = await ec_order_returns.findOne({
+                where: {
+                    [Op.and]: [
+                        {store_id: storeId},
+                        {id: returnId}
+                    ]
+                }
+            });
+
+            if (order === null) {
+                return res.status(404).json({message: 'Return Not Found / Unauthorized vendor return', status: 404});
+            } else {
+                //update relation
+                await ec_order_returns.update({
+                    return_status: status
+                }, {
+                    where: {
+                        id: returnId
+                    }
+                });
+
+                return res.status(200).json({message: 'Success Update Return', status: 200});
+            }
+        } catch (e) {
+            return res.status(500).json({status: 500, message: e.message});
+        }
+    },
+
+    async destroyVendorReturn (req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {returnId} = req.params
+
+        //check product is vendor product
+        try {
+            const order = await ec_order_returns.findOne({
+                where: {
+                    [Op.and]: [
+                        {store_id: storeId},
+                        {id: returnId}
+                    ]
+                }
+            });
+
+            if (order === null) {
+                return res.status(404).json({message: 'Return Not Found / Unauthorized vendor return', status: 404});
+            } else {
+                //destroy relation
+                await ec_order_returns.destroy({
+                    where: {
+                        id: returnId
+                    }
+                });
+
+                return res.status(200).json({message: 'Success Delete Return', status: 200});
+            }
+        } catch (e) {
+            return res.status(500).json({status: 500, message: e.message});
+        }
     }
 }

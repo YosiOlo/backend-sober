@@ -206,7 +206,7 @@ module.exports = {
             try {
                 if (await bcrypt.compare(password, user.password)) {
                     const token = jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '1d'});
-                    res.cookie('token_remember', tokens, {maxAge: 604800000, httpOnly: true, path: '/api/auth/signin'});
+                    res.cookie('token_remember', tokens, {maxAge: 604800000, httpOnly: true, path: '/sober/api/auth/signin'});
                     return res.status(200).json({message: 'Login success and send cookies', status: 200,email: user.email, token: token});
                 } else {
                     return res.status(400).json({message: 'Password not match', status: 400});
