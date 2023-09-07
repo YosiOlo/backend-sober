@@ -8,12 +8,46 @@ module.exports = {
             const cart = await ec_carts.findAll({
                 where: {
                     customer_id: userId,
-                }
+                },
+                order: [
+                    ['created_at', 'DESC']
+                ],
+                include: [
+                    {
+                        model: ec_products,
+                        as: 'product',
+                        attributes : ['id', 'name', 'price', 'stock_status', 'images']
+                    },
+                ],
             });
             if (!cart) {
                 return res.status(404).json({message: 'cart not found'});
             } else {
-                res.status(200).json({message: 'success get cart data', data: cart});
+                let arrays = [];
+                cart.map((cart) => {
+                    let images = []
+                    if (cart.product == null) {
+                        arrays.push(cart);
+                        return;
+                    }
+                    if (cart.product.dataValues.images.length == 2) {
+                        arrays.push(cart);
+                        return;
+                    }
+                    const split = cart.product.images.split(',').map((image) => {
+                        image = image.replace(/\\/g, "").replace(/"/g, "").replace(/\[/g, "").replace(/\]/g, "");
+                        images.push(image);
+                    });
+                    arrays.push({
+                        ...cart.dataValues,
+                        product: {
+                            ...cart.product.dataValues,
+                            images: images
+                        }
+                    });
+                });
+
+                res.status(200).json({message: 'success get cart data', data: arrays});
             }
         }
         catch (err) {

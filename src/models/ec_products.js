@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       ec_products.belongsTo(models.mp_stores, {foreignKey: 'store_id', as: 'store'}),
       ec_products.belongsTo(models.ec_brands, {foreignKey: 'brand_id', as: 'brand'})
       ec_products.hasOne(models.ec_reviews, {foreignKey: 'product_id', as: 'reviews'})
+      ec_products.hasMany(models.ec_carts, {foreignKey: 'product_id', as: 'carts'})
     }
   }
   ec_products.init({
