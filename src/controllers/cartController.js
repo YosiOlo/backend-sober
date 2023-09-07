@@ -57,7 +57,6 @@ module.exports = {
                 product_id,
                 qty,
                 attributes,
-                extras,
                 options,
                 is_buynow
             });
