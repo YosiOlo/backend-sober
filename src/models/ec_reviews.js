@@ -27,7 +27,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ec_reviews',
-    timestamps: false,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   });
   return ec_reviews;
 };

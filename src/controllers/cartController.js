@@ -1,4 +1,4 @@
-const {ec_carts, Sequelize, ec_product_attributes} = require('../models');
+const {ec_carts, Sequelize, ec_product_attributes, ec_products} = require('../models');
 const Op = Sequelize.Op;
 
 module.exports = {
