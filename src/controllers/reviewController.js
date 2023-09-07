@@ -1,4 +1,4 @@
-const {ec_reviews, Sequelize} = require('../models');
+const {ec_reviews, Sequelize, ec_products, ec_customer} = require('../models');
 const Op = Sequelize.Op;
 
 module.exports = {
@@ -18,13 +18,48 @@ module.exports = {
                     }
                     ]
                 },
+                include: [
+                    {
+                        model: ec_products,
+                        as: 'product',
+                        attributes : ['id', 'name','images']
+                    },
+                    {
+                        model: ec_customer,
+                        as: 'customer',
+                        attributes : ['id', 'name', 'email']
+                    }
+                ],
                 limit: +limit,
                 offset: +offset,
             });
+            let arrays = [];
+            reviews.rows.map((review) => {
+                let images = []
+                if (review.dataValues.product == null) {
+                    arrays.push({review});
+                    return;
+                }
+                const split = review.dataValues.product.images.split(',').map((image) => {
+                    image = image.replace(/\\/g, "").replace(/"/g, "").replace(/\[/g, "").replace(/\]/g, "");
+                    images.push(image);
+                });
+                arrays.push({
+                    ...review.dataValues,
+                    product: {
+                        ...review.product.dataValues,
+                        images: images
+                    }
+                });
+            });
+
             return res.status(200).json({
                 status: 200,
                 message: 'Success Get Reviews',
-                data: reviews
+                data: {
+                    count: reviews.count,
+                    rows: arrays
+                }
             });
         }
         catch (error) {
@@ -179,10 +214,29 @@ module.exports = {
                     '$product.store_id$': storeId
                 }
             });
+            let arrays = [];
+            reviews.map((review) => {
+                let images = []
+                if (review.dataValues.product == null) {
+                    arrays.push({review});
+                    return;
+                }
+                const split = review.dataValues.product.images.split(',').map((image) => {
+                    image = image.replace(/\\/g, "").replace(/"/g, "").replace(/\[/g, "").replace(/\]/g, "");
+                    images.push(image);
+                });
+                arrays.push({
+                    ...review.dataValues,
+                    product: {
+                        ...review.product.dataValues,
+                        images: images
+                    }
+                });
+            });
             return res.status(200).json({
                 status: 200,
                 message: 'Success Get Reviews',
-                data: reviews
+                data: arrays
             });
         } catch (error) {
             return res.status(500).json({

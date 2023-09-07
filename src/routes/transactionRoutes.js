@@ -1,5 +1,6 @@
 const transactionRoutes =  require("express").Router();
 const transactionController = require("../controllers/transactionController");
+const cartController = require("../controllers/cartController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
 //admin
@@ -9,7 +10,11 @@ transactionRoutes.delete('/admin', authMiddleware.verifyAdmin,transactionControl
 
 //user
 transactionRoutes.get('/user', authMiddleware.verifyToken, transactionController.getUser);
-transactionRoutes.post('/user', authMiddleware.verifyToken)
+transactionRoutes.post('/user', authMiddleware.verifyToken);
+transactionRoutes.get('/cart', authMiddleware.verifyToken, cartController.cartUser);
+transactionRoutes.post('/cart/:id', authMiddleware.verifyToken, cartController.addCart);
+transactionRoutes.delete('/cart/:id', authMiddleware.verifyToken, cartController.deleteCart);
+transactionRoutes.put('/cart/:id', authMiddleware.verifyToken, cartController.updateCart);
 
 //vendor
 transactionRoutes.get('/vendor', authMiddleware.verifyVendor, transactionController.getVendor);
