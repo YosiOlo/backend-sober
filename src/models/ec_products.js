@@ -11,13 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      ec_products.belongsTo(models.ec_product_categories1, {foreignKey: 'id', as: 'kategori_1'})
+      ec_products.belongsTo(models.ec_product_categories1, {foreignKey: 'id', as: 'kategori_1'}),
       ec_products.belongsTo(models.ec_product_categories2, {foreignKey: 'id', as: 'kategori_2'}),
       ec_products.belongsTo(models.ec_product_categories3, {foreignKey: 'id', as: 'kategori_3'}),
       ec_products.belongsTo(models.mp_stores, {foreignKey: 'store_id', as: 'store'}),
-      ec_products.belongsTo(models.ec_brands, {foreignKey: 'brand_id', as: 'brand'})
-      ec_products.hasOne(models.ec_reviews, {foreignKey: 'product_id', as: 'reviews'})
-      ec_products.hasMany(models.ec_carts, {foreignKey: 'product_id', as: 'carts'})
+      ec_products.belongsTo(models.ec_brands, {foreignKey: 'brand_id', as: 'brand'}),
+      ec_products.hasOne(models.ec_reviews, {foreignKey: 'product_id', as: 'reviews'}),
+      ec_products.hasMany(models.ec_carts, {foreignKey: 'product_id', as: 'carts'}),
+      ec_products.hasMany(models.ec_wish_lists, {foreignKey: 'product_id', as: 'wish_lists'})
     }
   }
   ec_products.init({

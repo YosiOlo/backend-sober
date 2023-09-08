@@ -81,7 +81,7 @@ module.exports = {
                 },
                 limit: parseInt(limit),
                 offset: offset,
-                include: {all: true}
+                include: ['kategori_1', 'kategori_2', 'kategori_3', 'store', 'brand', 'reviews'],
             });
             let arrays = [];
             products.rows.map((product) => {
@@ -121,7 +121,7 @@ module.exports = {
                 where: {
                     id: id
                 },
-                include: {all: true}
+                include: ['kategori_1', 'kategori_2', 'kategori_3', 'store', 'brand', 'reviews']
             });
             if (!product) {
                 return res.status(404).json({
@@ -253,5 +253,114 @@ module.exports = {
             });
         }
     },
+
+    async vendorDelete(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {id} = req.params;
+
+        try {
+            const product = await ec_products.findOne({
+                where: {
+                    id: id,
+                    store_id: storeId
+                }
+            });
+            if (!product) {
+                return res.status(404).json({
+                    status: 404,
+                    message: 'Product Not Found / Unauthorized Vendor',
+                    data: {}
+                });
+            } else {
+                await product.destroy();
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success Delete Product',
+                    data: {}
+                });
+            }
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
+        }
+    },
+
+    async addProduct(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+
+        const {name, description, price, stock, weight, sku, images, category_id, attribute_set_id} = req.body;
+        try {
+            const product = await ec_products.create({
+                name: name,
+                description: description,
+                price: price,
+                stock: stock,
+                weight: weight,
+                sku: sku,
+                images: images,
+                store_id: storeId,
+                category_id: category_id,
+                attribute_set_id: attribute_set_id
+            });
+            return res.status(200).json({
+                status: 200,
+                message: 'Success Add Product',
+                data: product
+            });
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });   
+        }
+    },
+
+    async updateProduct(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {id} = req.params;
+        const {name, description, price, stock, weight, sku, images, category_id, attribute_set_id} = req.body;
+        try {
+            const product = await ec_products.findOne({
+                where: {
+                    id: id,
+                    store_id: storeId
+                }
+            });
+            if (!product) {
+                return res.status(404).json({
+                    status: 404,
+                    message: 'Product Not Found / Unauthorized Vendor',
+                    data: {}
+                });
+            } else {
+                await product.update({
+                    name: name,
+                    description: description,
+                    price: price,
+                    stock: stock,
+                    weight: weight,
+                    sku: sku,
+                    images: images,
+                    category_id: category_id,
+                    attribute_set_id: attribute_set_id
+                });
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success Update Product',
+                    data: product
+                });
+            }
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });   
+        }
+    }
 }
         

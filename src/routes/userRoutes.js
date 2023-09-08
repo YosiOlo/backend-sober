@@ -1,6 +1,7 @@
 const userRoutes = require('express').Router();
 const userController = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');
+const wishlistController = require('../controllers/wishlistController');
 
 //admin
 userRoutes.get('/admin/list', authMiddleware.verifyAdmin, userController.listCustomer);
@@ -10,5 +11,12 @@ userRoutes.put('/admin/update/:id', authMiddleware.verifyAdmin, );
 //user
 userRoutes.post('/change-pw', authMiddleware.verifyToken, userController.forgotPassword);
 
+//wishlist
+userRoutes.get('/wishlist', authMiddleware.verifyToken, wishlistController.userWishlist);
+userRoutes.post('/wishlist/:id', authMiddleware.verifyToken, wishlistController.addWishlist);
+userRoutes.delete('/wishlist/:id', authMiddleware.verifyToken, wishlistController.userDelete);
+
+userRoutes.get('/wishlist/admin/list', authMiddleware.verifyAdmin, wishlistController.allWishlist);
+userRoutes.delete('/wishlist/admin/:id', authMiddleware.verifyAdmin, wishlistController.deleteWishlist);
 
 module.exports = userRoutes;
