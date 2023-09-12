@@ -9,6 +9,7 @@ userRoutes.post('/admin/add-admin', authMiddleware.verifyAdmin, userController.a
 userRoutes.put('/admin/update/:id', authMiddleware.verifyAdmin, );
 
 //user
+userRoutes.get('/vendor', authMiddleware.verifyVendor, userController.vendorInfo);
 userRoutes.post('/change-pw', authMiddleware.verifyToken, userController.forgotPassword);
 
 //wishlist

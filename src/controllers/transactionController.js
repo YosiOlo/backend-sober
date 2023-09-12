@@ -9,6 +9,7 @@ const {
     ec_order_addresses,
     ec_shipments,
     ec_shipment_histories,
+    mp_vendor_info
 } = require('../models');
 const Op = Sequelize.Op;
 const {v4: uuidv4} = require('uuid');
@@ -220,6 +221,63 @@ module.exports = {
             return res.status(200).json({
                 status: 200,
                 message: 'Success Get Withdrawal',
+                data: withdrawal
+            });
+
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
+        }
+    },
+
+    async vendorAddWithdrawal(req, res) {
+        const customerId = req.user.id;
+        const {
+            amount, 
+            bank_info, 
+            account_number, 
+            account_name,
+            currency,
+            description,
+            payment_channel
+        } = req.body;
+
+        try {
+            //check balance
+            const vendor = await mp_vendor_info.findOne({
+                where: {
+                    customer_id: customerId
+                }
+            });
+
+            if (vendor === null) {
+                return res.status(404).json({message: 'Unauthorized vendor', status: 404});
+            } else {
+                if (vendor.balance < amount) {
+                    return res.status(400).json({message: 'Balance Not Enough', status: 400});
+                }
+            }
+
+            const withdrawal = await member_withdrawal.create({
+                customer_id: customerId,
+                current_balance: vendor.balance,
+                currency,
+                amount,
+                bank_info,
+                payment_channel,
+                account_number,
+                account_name,
+                description,
+                user_id: 1,
+                status: 'pending',
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Success Add Withdrawal',
                 data: withdrawal
             });
 
@@ -521,5 +579,37 @@ module.exports = {
         } catch (e) {
             return res.status(500).json({status: 500, message: e.message});
         }
-    }
+    },
+
+    async destroyVendorWithdrawal (req, res) {
+        const userId = req.user.id
+        const {withdrawalId} = req.params
+
+        try {
+            //check data
+            const withdrawal = await member_withdrawal.findOne({
+                where: {
+                    [Op.and]: [
+                        {customer_id: userId},
+                        {id: withdrawalId}
+                    ]
+                }
+            });
+
+            if (withdrawal === null) {
+                return res.status(404).json({message: 'Withdrawal Not Found / Unauthorized withdrawal', status: 404});
+            } else {
+                await member_withdrawal.destroy({
+                    where: {
+                        id: withdrawalId
+                    }
+                });
+
+                return res.status(200).json({message: 'Success Delete Withdrawal', status: 200});
+            }
+        }
+        catch (e) {
+            return res.status(500).json({status: 500, message: e.message});
+        }
+    },
 }

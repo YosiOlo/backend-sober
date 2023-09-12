@@ -1,4 +1,4 @@
-const {ec_customer, Sequelize, users} = require('../models');
+const {ec_customer, mp_vendor_info, Sequelize, users} = require('../models');
 const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -216,5 +216,29 @@ module.exports = {
 
         return res.status(200).json({message: 'Profile updated'});
     },
+
+    async vendorInfo(req, res) {
+        const {id} = req.user;
+
+        try {
+            const vendor = await mp_vendor_info.findOne({
+                where: {
+                    customer_id: id
+                }
+            });
+
+            if (!vendor) {
+                return res.status(400).json({message: 'Vendor not found'});
+            } else {
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success',
+                    data: vendor
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
+    }
 
 }
