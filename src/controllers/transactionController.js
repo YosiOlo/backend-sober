@@ -237,9 +237,7 @@ module.exports = {
         const customerId = req.user.id;
         const {
             amount, 
-            bank_info, 
-            account_number, 
-            account_name,
+            bank_info,
             currency,
             description,
             payment_channel
@@ -268,8 +266,6 @@ module.exports = {
                 amount,
                 bank_info,
                 payment_channel,
-                account_number,
-                account_name,
                 description,
                 user_id: 1,
                 status: 'pending',
