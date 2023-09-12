@@ -15,6 +15,7 @@ const {
     ec_product_etalase,
     ec_product_translations
 } = require('../models');
+const fs = require('fs');
 const Op = Sequelize.Op;
 
 module.exports = {
@@ -30,7 +31,7 @@ module.exports = {
                         name: {
                             [Op.iLike]: `%${search}%`
                         },
-                        is_featured: 1         
+                        is_featured: 1      
                     }
                 },
                 limit: +limit,
@@ -272,6 +273,20 @@ module.exports = {
                     data: {}
                 });
             } else {
+                //delete images from public folder
+                const split = product.dataValues.images.split(',').map((image) => {
+                    //remove backslash, double quote, and square bracket
+                    image = image.replace(/\\/g, "").replace(/"/g, "").replace(/\[/g, "").replace(/\]/g, "");
+
+                    //delete image from public folder
+                    fs.unlink(`./public/${image}`, (err) => {
+                        if (err) {
+                            console.error(err)
+                            return
+                        }
+                    }
+                    );
+                });
                 await product.destroy();
                 return res.status(200).json({
                     status: 200,
@@ -290,20 +305,143 @@ module.exports = {
 
     async addProduct(req, res) {
         const storeId = req.user.dataValues.store.dataValues.id;
-
-        const {name, description, price, stock, weight, sku, images, category_id, attribute_set_id} = req.body;
+        
+        const {
+            name,
+            etalase, 
+            description, 
+            content,
+            with_storehouse_management,
+            allow_checkout_when_out_of_stock,
+            brand_id,
+            product_collections,
+            price, 
+            fee,
+            hpp,
+            is_variation,
+            sale_price,
+            cost_per_item,
+            stock, 
+            stock_status,
+            wide,
+            length,
+            height,
+            weight, 
+            sku, 
+            kategori_1,
+            kategori_2,
+            kategori_3,
+            barcodes,
+        } = req.body;
         try {
+            //check field
+            if (!name || !etalase || !description 
+                || !content || !price || !stock || !weight 
+                || !sku || !kategori_1 || !kategori_2 
+                || !kategori_3 || !barcodes || !brand_id || !fee
+                || !hpp || !sale_price || !cost_per_item || !stock_status
+                || !wide || !length || !height || !product_collections
+                ) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'All field is required',
+                });
+            }
+
+            if (req.files.length < 1) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Image is required, minimum 1 image',
+                });
+            }
+            //check if product exist
+            const productExist = await ec_products.findOne({
+                where: {
+                    name: name,
+                    store_id: storeId
+                }
+            });
+            if (productExist && is_variation == false) {
+                //delete images
+                req.files.map((file) => {
+                    fs.unlink(`./${file.path}`, (err) => {
+                        if (err) {
+                            console.error(err)
+                            return
+                        }
+                    }
+                    );
+                });
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Product already exist',
+                });
+            }
+            //check if barcode exist
+            const barcodeExist = await ec_products.findOne({
+                where: {
+                    barcode: barcodes,
+                    store_id: storeId
+                }
+            });
+            if (barcodeExist) {
+                //delete images
+                req.files.map((file) => {
+                    fs.unlink(`./${file.path}`, (err) => {
+                        if (err) {
+                            console.error(err)
+                            return
+                        }
+                    }
+                    );
+                });
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Barcode already exist',
+                });
+            }
+
+            let images = [];
+            req.files.map((file) => {
+                //remove public path
+                file.path = file.path.replace('public/', '');
+                images.push(file.path);
+            });
+            //serialize images
+            images = JSON.stringify(images);
+                            
             const product = await ec_products.create({
                 name: name,
+                etalase: etalase,
                 description: description,
-                price: price,
-                stock: stock,
-                weight: weight,
-                sku: sku,
+                content: content,
+                status: 'publish',
                 images: images,
+                sku: sku,
+                allow_checkout_when_out_of_stock: allow_checkout_when_out_of_stock,
+                with_storehouse_management: with_storehouse_management,
+                brand_id: brand_id,
+                hpp: hpp,
+                fee: fee,
+                price: price,
+                sale_price: sale_price,
+                start_date: new Date(),
+                length: length,
+                wide: wide,
+                height: height,
+                weight: weight,
+                stock_status: stock_status,
+                created_by_id: 0,
+                created_by_type: 'vendor',
+                product_type: 'simple',
+                barcode: barcodes,
+                cost_per_item: cost_per_item,
                 store_id: storeId,
-                category_id: category_id,
-                attribute_set_id: attribute_set_id
+                approved_by: 0,
+                kategori1: kategori_1,
+                kategori2: kategori_2,
+                kategori3: kategori_3,
+                terjual: 0
             });
             return res.status(200).json({
                 status: 200,
@@ -322,7 +460,17 @@ module.exports = {
     async updateProduct(req, res) {
         const storeId = req.user.dataValues.store.dataValues.id;
         const {id} = req.params;
-        const {name, description, price, stock, weight, sku, images, category_id, attribute_set_id} = req.body;
+        const {
+            name, 
+            description, 
+            price, 
+            stock, 
+            weight, 
+            sku, 
+            images, 
+            category_id, 
+            attribute_set_id
+        } = req.body;
         try {
             const product = await ec_products.findOne({
                 where: {

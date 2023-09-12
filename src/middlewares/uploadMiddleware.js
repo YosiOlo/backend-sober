@@ -4,10 +4,10 @@ const {v4: uuidv4} = require('uuid');
 
 const storage_customer = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, 'public/customers');
+        callback(null, './public/customers');
     },
     filename: (req, file, callback) => {
-        callback(null, uuidv4()+ file.extname(file.originalname).split('.')[1] + path.extname(file.originalname))
+        callback(null, uuidv4()+ path.extname(file.originalname).split('.')[1] + path.extname(file.originalname))
     }
 });
 
@@ -49,5 +49,7 @@ const multipleUpload = (req, res, next) => {
     });
 }
 
-module.exports.singleUpload = singleUpload;
-module.exports.multipleUpload = multipleUpload;
+module.exports = {
+    singleUpload,
+    multipleUpload
+}
