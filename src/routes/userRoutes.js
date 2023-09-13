@@ -8,8 +8,13 @@ userRoutes.get('/admin/list', authMiddleware.verifyAdmin, userController.listCus
 userRoutes.post('/admin/add-admin', authMiddleware.verifyAdmin, userController.addAdmin);
 userRoutes.put('/admin/update/:id', authMiddleware.verifyAdmin, );
 
-//user
+//vendor
 userRoutes.get('/vendor', authMiddleware.verifyVendor, userController.vendorInfo);
+userRoutes.put('/vendor/tax', authMiddleware.verifyVendor, userController.vendorTax);
+userRoutes.put('/vendor/payment', authMiddleware.verifyVendor, userController.vendorPayment);
+
+
+//customer
 userRoutes.post('/change-pw', authMiddleware.verifyToken, userController.forgotPassword);
 
 //wishlist

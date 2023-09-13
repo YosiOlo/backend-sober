@@ -10,6 +10,7 @@ const kurirRoutes = require("./kurirRoutes");
 const transactionRoutes = require("./transactionRoutes");
 const reviewRoutes = require("./reviewRoutes");
 const shipmentRoutes = require("./shipmentRoutes");
+const membership = require("../controllers/membershipController")
 
 const miscRoutes = require("./miscRoutes");
 const contactRoutes = require("./contactRoutes");
@@ -23,6 +24,7 @@ mainRoutes.use("/currency", currencyRoutes);
 mainRoutes.use("/discount", discountRoutes);
 mainRoutes.use("/product", productRoutes);
 mainRoutes.use("/review", reviewRoutes);
+mainRoutes.get("/membership", membership.listPaket);
 
 //trans routes
 mainRoutes.use("/transaction", transactionRoutes);
