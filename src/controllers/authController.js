@@ -1,4 +1,9 @@
-const {ec_customer, users, Sequelize} = require('../models');
+const {
+    ec_customer, 
+    users, 
+    ec_paket_master,
+    Sequelize
+} = require('../models');
 const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -30,6 +35,16 @@ module.exports = {
             return res.status(400).json({message: 'Email already exist'});
         }
 
+        const membershiptier = await ec_paket_master.findOne({
+            where: {
+                id: tier
+            }
+        });
+
+        if (!membershiptier) {
+            return res.status(400).json({message: 'Membership tier not found'});
+        }
+
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(password, salt);
 
@@ -45,8 +60,6 @@ module.exports = {
                 is_vendor: is_vendor,
                 commissions_referral: referral,
                 email_verify_token: token,
-                created_at: new Date(),
-                updated_at: new Date(),
                 level: tier ? tier : null
             });
 
