@@ -106,7 +106,7 @@ module.exports = {
             margin: 4px 2px;color: white;
             padding: 10px 32px;
             transition-duration: 0.4s;" 
-            href='http://kuro.asrofur.me/sober/api/auth/verify/${token}'>Verify Email</a>
+            href='${process.env.BASE_URL}api/auth/verify/${token}'>Verify Email</a>
         </button>
         <center>
 </html>`
@@ -443,7 +443,7 @@ module.exports = {
                             margin: 4px 2px;color: white;
                             padding: 10px 32px;
                             transition-duration: 0.4s;" 
-                            href='http://localhost:3000/api/auth/resetpage/${token}'>Reset Password</a>
+                            href='${process.env.BASE_URL}api/auth/resetpage/${token}'>Reset Password</a>
                         </button>
                         <center>
                 </html>`
