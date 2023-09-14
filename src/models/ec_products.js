@@ -11,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      ec_products.belongsTo(models.ec_product_categories1, {foreignKey: 'id', as: 'kategori_1'}),
-      ec_products.belongsTo(models.ec_product_categories2, {foreignKey: 'id', as: 'kategori_2'}),
-      ec_products.belongsTo(models.ec_product_categories3, {foreignKey: 'id', as: 'kategori_3'}),
+      ec_products.belongsTo(models.ec_product_categories1, {foreignKey: 'kategori1', as: 'kategori_1'}),
+      ec_products.belongsTo(models.ec_product_categories2, {foreignKey: 'kategori2', as: 'kategori_2'}),
+      ec_products.belongsTo(models.ec_product_categories3, {foreignKey: 'kategori3', as: 'kategori_3'}),
       ec_products.belongsTo(models.mp_stores, {foreignKey: 'store_id', as: 'store'}),
       ec_products.belongsTo(models.ec_brands, {foreignKey: 'brand_id', as: 'brand'}),
       ec_products.hasOne(models.ec_reviews, {foreignKey: 'product_id', as: 'reviews'}),
@@ -60,9 +60,9 @@ module.exports = (sequelize, DataTypes) => {
     cost_per_item: DataTypes.DOUBLE,
     store_id: DataTypes.INTEGER,
     approved_by: DataTypes.INTEGER,
-    kategori1: DataTypes.INTEGER,
-    kategori2: DataTypes.INTEGER,
-    kategori3: DataTypes.INTEGER,
+    kategori1: DataTypes.STRING,
+    kategori2: DataTypes.STRING,
+    kategori3: DataTypes.STRING,
     terjual: DataTypes.STRING
   }, {
     sequelize,

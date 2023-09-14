@@ -13,7 +13,8 @@ const {
     ec_product_categories_translations,
     ec_product_category_product,
     ec_product_etalase,
-    ec_product_translations
+    ec_product_translations,
+    mp_stores
 } = require('../models');
 const fs = require('fs');
 const Op = Sequelize.Op;
@@ -82,7 +83,25 @@ module.exports = {
                 },
                 limit: parseInt(limit),
                 offset: offset,
-                include: ['kategori_1', 'kategori_2', 'kategori_3', 'store', 'brand', 'reviews'],
+                include: [{
+                    model: ec_product_categories1,
+                    as: 'kategori_1',
+                    on: Sequelize.literal('"ec_products"."kategori1" = "kategori_1"."id"::text')
+                }, {
+                    model: ec_product_categories2,
+                    as: 'kategori_2',
+                    on: Sequelize.literal('"ec_products"."kategori2" = "kategori_2"."id"::text')
+                }, {
+                    model: ec_product_categories3,
+                    as: 'kategori_3',
+                    on: Sequelize.literal('"ec_products"."kategori3" = "kategori_3"."id"::text')
+                }, {
+                    model: mp_stores,
+                    as: 'store',
+                    attributes: {
+                        exclude: ['ktp','idktp']
+                    }
+                },'brand', 'reviews'],
             });
             let arrays = [];
             products.rows.map((product) => {
@@ -122,7 +141,25 @@ module.exports = {
                 where: {
                     id: id
                 },
-                include: ['kategori_1', 'kategori_2', 'kategori_3', 'store', 'brand', 'reviews']
+                include: [{
+                    model: ec_product_categories1,
+                    as: 'kategori_1',
+                    on: Sequelize.literal('"ec_products"."kategori1" = "kategori_1"."id"::text')
+                }, {
+                    model: ec_product_categories2,
+                    as: 'kategori_2',
+                    on: Sequelize.literal('"ec_products"."kategori2" = "kategori_2"."id"::text')
+                }, {
+                    model: ec_product_categories3,
+                    as: 'kategori_3',
+                    on: Sequelize.literal('"ec_products"."kategori3" = "kategori_3"."id"::text')
+                }, {
+                    model: mp_stores,
+                    as: 'store',
+                    attributes: {
+                        exclude: ['ktp','idktp']
+                    }
+                },'brand', 'reviews'],
             });
             if (!product) {
                 return res.status(404).json({
@@ -219,7 +256,19 @@ module.exports = {
                         }
                     ]
                 },
-                include: {all: true},
+                include: [{
+                    model: ec_product_categories1,
+                    as: 'kategori_1',
+                    on: Sequelize.literal('"ec_products"."kategori1" = "kategori_1"."id"::text')
+                }, {
+                    model: ec_product_categories2,
+                    as: 'kategori_2',
+                    on: Sequelize.literal('"ec_products"."kategori2" = "kategori_2"."id"::text')
+                }, {
+                    model: ec_product_categories3,
+                    as: 'kategori_3',
+                    on: Sequelize.literal('"ec_products"."kategori3" = "kategori_3"."id"::text')
+                },'brand'],
                 limit: parseInt(limit),
                 offset: offset
             });

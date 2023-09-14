@@ -1,6 +1,8 @@
 const {
     ec_customer, 
     mp_vendor_info, 
+    mp_stores,
+    meta_boxes,
     Sequelize, 
     users
 } = require('../models');
@@ -231,16 +233,31 @@ module.exports = {
             const vendor = await mp_vendor_info.findOne({
                 where: {
                     customer_id: id
+                },
+                attributes: {
+                    exclude: ['customer_id', 'id', 'bank_info', 'tax_info']
                 }
             });
 
-            if (!vendor) {
+            const store = await mp_stores.findOne({
+                where: {
+                    customer_id: id
+                },
+                attributes: {
+                    exclude: ['customer_id', 'id', 'idktp', 'ktp']
+                }
+            });
+
+            if (!vendor || !store) {
                 return res.status(400).json({message: 'Vendor not found'});
             } else {
                 return res.status(200).json({
                     status: 200,
                     message: 'Success',
-                    data: vendor
+                    data: {
+                        vendor_info: vendor,
+                        store_info: store
+                    }
                 });
             }
         } catch (e) {
@@ -368,12 +385,184 @@ module.exports = {
 
                 return res.status(200).json({message: 'Payment info updated'});
             } else {
-                return res.status(400).json({message: 'Method not found'});
+                return res.status(400).json({message: 'Payment Method not found'});
             }
         } catch (e) {
             return res.status(500).json({message: e.message});
         }
+    },
+
+    async vendorProfile (req, res) {
+        const userId = req.user.id;
+        const {
+            name,
+            email,
+            telepon,
+            address,
+            country,
+            state,
+            city,
+            postal_code,
+            description,
+            content,
+            company_name,
+            kelurahan,
+            kecamatan,
+            id_ktp
+        } = req.body;
+
+        try {
+            const store = await mp_stores.findOne({
+                where: {
+                    customer_id: userId
+                }
+            });
+
+            if (!store) {
+                return res.status(400).json({message: 'Store not found or not registered as vendor'});
+            }
+
+            let ktp, cover, logo;
+
+            if(req.files.ktp !== undefined){
+                ktp = req.files.ktp[0].path.replace("public/", "");
+            } else {
+                ktp = store.ktp;
+            }
+
+            if(req.files.cover !== undefined){
+                cover = req.files.cover[0].path.replace("public/", "");
+            } else {
+                cover = store.cover;
+            }
+
+            if(req.files.logo !== undefined){
+                logo = req.files.logo[0].path.replace("public/", "");
+            } else {
+                logo = store.logo;
+            }
+
+            const data = {
+                name: name.length > 0 ? name : store.name,
+                email: email.length > 0 ? email : store.email,
+                phone: telepon.length > 0 ? telepon : store.telepon,
+                address: address.length > 0 ? address : store.address,
+                country: country.length > 0 ? country : store.country,
+                state: state.length > 0 ? state : store.state,
+                city: city.length > 0 ? city : store.city,
+                zip_code: postal_code.length > 0 ? postal_code : store.postal_code,
+                description: description.length > 0 ? description : store.description,
+                content: content.length > 0 ? content : store.content,
+                company: company_name.length > 0 ? company_name : store.company_name,
+                kelurahan: kelurahan.length > 0 ? kelurahan : store.kelurahan,
+                kecamatan: kecamatan.length > 0 ? kecamatan : store.kecamatan,
+                idktp: id_ktp.length > 0 ? id_ktp : store.id_ktp,
+                ktp: ktp,
+                covers: cover,
+                logo: logo
+            }
+
+            await mp_stores.update(data, {
+                where: {
+                    customer_id: userId
+                }
+            });
+
+            return res.status(200).json({message: 'Store profile info updated'});
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
+    },
+
+    async vendorTambahan(req, res) {
+        const userId = req.user.id;
+        const {
+            facebook,
+            instagram,
+            twitter,
+            youtube,
+            linkedin
+        } = req.body;
+
+        try {
+            const social = await meta_boxes.findOne({
+                where: {
+                    [Op.and]: [
+                        {
+                            reference_id: userId
+                        },
+                        {
+                            meta_key: 'socials'
+                        }
+                    ]
+                }
+            });
+
+            const background = await meta_boxes.findOne({
+                where: {
+                    [Op.and]: [
+                        {
+                            reference_id: userId
+                        },
+                        {
+                            meta_key: 'background'
+                        }
+                    ]
+                }
+            });
+
+            if (!social || !background) {
+                return res.status(400).json({message: 'Store not found or not registered as vendor'});
+            }
+            let bgImage
+            if (req.file !== undefined) {
+                bgImage = req.file.path.replace("public/", "");
+            } else {
+                bgImage = background.meta_value;
+            }
+
+
+            const dataSocial = JSON.stringify({
+                facebook: facebook,
+                instagram: instagram,
+                twitter: twitter,
+                youtube: youtube,
+                linkedin: linkedin
+            })
+
+            const dataBackground = JSON.stringify({
+                background: bgImage
+            })
+
+            await meta_boxes.update(dataSocial, {
+                where: {
+                    [Op.and]: [
+                        {
+                            reference_id: userId
+                        },
+                        {
+                            meta_key: 'socials'
+                        }
+                    ]
+                }
+            });
+
+            await meta_boxes.update(dataBackground, {
+                where: {
+                    [Op.and]: [
+                        {
+                            reference_id: userId
+                        },
+                        {
+                            meta_key: 'background'
+                        }
+                    ]
+                }
+            });
+
+            return res.status(200).json({message: 'Store profile info updated'});
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
     }
-
-
 }
