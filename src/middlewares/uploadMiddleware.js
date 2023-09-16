@@ -42,6 +42,20 @@ const stores = multer({
     }
 });
 
+const reviews = multer({
+    storage: storage('./public/reviews'),
+    limits: {
+        fileSize: 1024 * 1024 * 2 //2MB
+    },
+    fileFilter: (req, file, callback) => {
+        const ext = path.extname(file.originalname);
+        if(ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
+            return callback(new Error('Only images are allowed'));
+        }
+        callback(null, true);
+    }
+});
+
 const singleUpload = (req, res, next) => {
     const uploadSingle = upload.single('image');
     uploadSingle(req, res, (err) => {
@@ -91,9 +105,22 @@ const backgroundUpload = (req, res, next) => {
     });
 }
 
+const reviewUpload = (req, res, next) => {
+    const uploadSingle = reviews.single('image');
+    uploadSingle(req, res, (err) => {
+        if(err) {
+            return res.status(400).json({
+                message: err.message
+            });
+        }
+        next();
+    });
+}
+
 module.exports = {
     singleUpload,
     multipleUpload,
     multipleFieldUpload,
-    backgroundUpload
+    backgroundUpload,
+    reviewUpload
 }

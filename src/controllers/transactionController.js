@@ -9,7 +9,8 @@ const {
     ec_order_addresses,
     ec_shipments,
     ec_shipment_histories,
-    mp_vendor_info
+    mp_vendor_info,
+    mp_customer_revenues
 } = require('../models');
 const Op = Sequelize.Op;
 const {v4: uuidv4} = require('uuid');
@@ -200,6 +201,34 @@ module.exports = {
             });
         }
 
+    },
+
+    async vendorRevenueHistory(req, res) {
+        const userId = req.user.id
+
+        try {
+            const revenue = await mp_customer_revenues.findAll({
+                where: {
+                    customer_id: userId
+                },
+            });
+
+            if (revenue === null) {
+                return res.status(404).json({message: 'Revenue Not Found', status: 404});
+            } else {
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success Get Revenue History',
+                    data: revenue
+                });
+            }
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
+        }
     },
 
     async vendorWithdrawal(req, res) {
