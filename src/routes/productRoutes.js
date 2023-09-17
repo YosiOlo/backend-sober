@@ -15,7 +15,9 @@ productRoutes.delete("/:id",authMiddleware.verifyAdmin , productController.delet
 productRoutes.get("/vendor/list", authMiddleware.verifyVendor, productController.vendorProducts);
 productRoutes.post("/vendor/add", authMiddleware.verifyVendor, uploadMiddleware.multipleUpload, productController.addProduct);
 productRoutes.delete("/vendor/:id", authMiddleware.verifyVendor, productController.vendorDelete);
+productRoutes.delete("/vendor/etalase", authMiddleware.verifyVendor, productController.vendorDeleteEtalase);
 productRoutes.put("/vendor/:id", authMiddleware.verifyVendor, uploadMiddleware.multipleUpload, productController.updateProduct);
+productRoutes.put("/vendor/etalase", authMiddleware.verifyVendor, productController.vendorUpdateEtalase);
 
 
 module.exports = productRoutes;

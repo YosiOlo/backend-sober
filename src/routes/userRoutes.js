@@ -7,7 +7,9 @@ const uploadMiddleware = require('../middlewares/uploadMiddleware');
 //admin
 userRoutes.get('/admin/list', authMiddleware.verifyAdmin, userController.listCustomer);
 userRoutes.post('/admin/add-admin', authMiddleware.verifyAdmin, userController.addAdmin);
-userRoutes.put('/admin/update/:id', authMiddleware.verifyAdmin, );
+userRoutes.put('/admin/update/:id', authMiddleware.verifyAdmin, userController.updateProfileAdmin);
+
+userRoutes.put('/profile/update', authMiddleware.verifyToken, userController.updateProfile);
 
 //vendor
 userRoutes.get('/vendor', authMiddleware.verifyVendor, userController.vendorInfo);

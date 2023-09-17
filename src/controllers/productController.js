@@ -66,6 +66,35 @@ module.exports = {
         limit = req.query.limit || 10;
         search = req.query.search || '';
         offset = (page - 1) * limit;
+
+        let orderby , order;
+        switch (req.query.orderby) {
+            case 'terbaru':
+                orderby = 'created_at'
+                order = 'DESC'
+                break;
+            case 'terlaris':
+                orderby = 'terjual'
+                order = 'DESC'
+                break;
+            case 'termurah':
+                orderby = 'price'
+                order = 'ASC'
+                break;
+            case 'termahal':
+                orderby = 'price'
+                order = 'DESC'
+                break;
+            case 'etalase':
+                orderby = 'etalase'
+                order = 'ASC'
+                break;
+            default:
+                orderby = 'created_at'
+                order = 'DESC'
+                break;
+        }
+
         try {
             const products = await ec_products.findAndCountAll({
                 where: {
@@ -83,6 +112,9 @@ module.exports = {
                 },
                 limit: parseInt(limit),
                 offset: offset,
+                order: [
+                    [orderby, order]
+                ],
                 include: [{
                     model: ec_product_categories1,
                     as: 'kategori_1',
@@ -234,6 +266,34 @@ module.exports = {
         search = req.query.search || '';
         offset = (page - 1) * limit;
 
+        let orderby , order;
+        switch (req.query.orderby) {
+            case 'terbaru':
+                orderby = 'created_at'
+                order = 'DESC'
+                break;
+            case 'terlaris':
+                orderby = 'terjual'
+                order = 'DESC'
+                break;
+            case 'termurah':
+                orderby = 'price'
+                order = 'ASC'
+                break;
+            case 'termahal':
+                orderby = 'price'
+                order = 'DESC'
+                break;
+            case 'etalase':
+                orderby = 'etalase'
+                order = 'ASC'
+                break;
+            default:
+                orderby = 'created_at'
+                order = 'DESC'
+                break;
+        }
+
         try {
             const products = await ec_products.findAndCountAll({
                 where: {
@@ -270,7 +330,10 @@ module.exports = {
                     on: Sequelize.literal('"ec_products"."kategori3" = "kategori_3"."id"::text')
                 },'brand'],
                 limit: parseInt(limit),
-                offset: offset
+                offset: offset,
+                order: [
+                    [orderby, order]
+                ],
             });
             let arrays = [];
             products.rows.map((product) => {
@@ -558,6 +621,84 @@ module.exports = {
                 data: error
             });   
         }
+    },
+
+    async vendorDeleteEtalase(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {etalase} = req.body;
+
+        try {
+            const product = await ec_products.findAll({
+                where: {
+                    store_id: storeId,
+                    etalase: etalase
+                }
+            });
+
+            if (!product) {
+                return res.status(404).json({
+                    status: 404,
+                    message: 'Product Not Found / Unauthorized Vendor',
+                    data: {}
+                });
+            } else {
+                product.map(async (item) => {
+                    await item.destroy();
+                });
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success Delete Product',
+                    data: {}
+                });
+            }
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });   
+        }
+    },
+
+    async vendorUpdateEtalase(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {etalase,new_etalase} = req.body;
+
+        try {
+            const product = await ec_products.findAll({
+                where: {
+                    store_id: storeId,
+                    etalase: etalase
+                }
+            });
+
+            if (!product) {
+                return res.status(404).json({
+                    status: 404,
+                    message: 'Product Not Found / Unauthorized Vendor',
+                    data: {}
+                });
+            } else {
+                product.map(async (item) => {
+                    await item.update({
+                        etalase: new_etalase
+                    });
+                });
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success Update Product',
+                    data: {}
+                });
+            }
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });   
+        }
     }
+
+
 }
         
