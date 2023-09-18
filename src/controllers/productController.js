@@ -14,6 +14,8 @@ const {
     ec_product_category_product,
     ec_product_etalase,
     ec_product_translations,
+    ec_product_related_relations,
+    ec_product_cross_sale_relations,
     mp_stores
 } = require('../models');
 const fs = require('fs');
@@ -133,6 +135,18 @@ module.exports = {
                     attributes: {
                         exclude: ['ktp','idktp']
                     }
+                }, {
+                    model: ec_product_related_relations,
+                    as: 'related_products',
+                    attributes: {
+                        exclude: ['from_product_id', 'id']
+                    },
+                }, {
+                    model: ec_product_cross_sale_relations,
+                    as: 'cross_sale_products',
+                    attributes: {
+                        exclude: ['from_product_id', 'id']
+                    },
                 },'brand', 'reviews'],
             });
             let arrays = [];
@@ -191,7 +205,19 @@ module.exports = {
                     attributes: {
                         exclude: ['ktp','idktp']
                     }
-                },'brand', 'reviews'],
+                }, {
+                    model: ec_product_related_relations,
+                    as: 'related_products',
+                    attributes: {
+                        exclude: ['from_product_id', 'id']
+                    },
+                }, {
+                    model: ec_product_cross_sale_relations,
+                    as: 'cross_sale_products',
+                    attributes: {
+                        exclude: ['from_product_id', 'id']
+                    },
+                }, 'brand', 'reviews'],
             });
             if (!product) {
                 return res.status(404).json({
@@ -242,6 +268,33 @@ module.exports = {
                 });
             } else {
                 await product.destroy();
+
+                //delete images from public folder
+                const split = product.dataValues.images.split(',').map((image) => {
+                    //remove backslash, double quote, and square bracket
+                    image = image.replace(/\\/g, "").replace(/"/g, "").replace(/\[/g, "").replace(/\]/g, "");
+                    fs.unlink(`./public/${image}`, (err) => {
+                        if (err) {
+                            console.error(err)
+                            return
+                        }
+                    }
+                    );
+                });
+
+                //check relations
+                const relatedProducts = await ec_product_related_relations.findAll({
+                    where: {
+                        from_product_id: id
+                    }
+                });
+
+                if (relatedProducts) {
+                    relatedProducts.map(async (relatedProduct) => {
+                        await relatedProduct.destroy();
+                    });
+                }
+
                 return res.status(200).json({
                     status: 200,
                     message: 'Success Delete Product',
@@ -328,7 +381,19 @@ module.exports = {
                     model: ec_product_categories3,
                     as: 'kategori_3',
                     on: Sequelize.literal('"ec_products"."kategori3" = "kategori_3"."id"::text')
-                },'brand'],
+                }, {
+                    model: ec_product_related_relations,
+                    as: 'related_products',
+                    attributes: {
+                        exclude: ['from_product_id', 'id']
+                    },
+                }, {
+                    model: ec_product_cross_sale_relations,
+                    as: 'cross_sale_products',
+                    attributes: {
+                        exclude: ['from_product_id', 'id']
+                    },
+                }, 'brand'],
                 limit: parseInt(limit),
                 offset: offset,
                 order: [
@@ -400,6 +465,20 @@ module.exports = {
                     );
                 });
                 await product.destroy();
+
+                //check relations
+                const relatedProducts = await ec_product_related_relations.findAll({
+                    where: {
+                        from_product_id: id
+                    }
+                });
+
+                if (relatedProducts) {
+                    relatedProducts.map(async (relatedProduct) => {
+                        await relatedProduct.destroy();
+                    });
+                }
+
                 return res.status(200).json({
                     status: 200,
                     message: 'Success Delete Product',
@@ -444,6 +523,8 @@ module.exports = {
             kategori_2,
             kategori_3,
             barcodes,
+            related_products,
+            cross_sale
         } = req.body;
         try {
             //check field
@@ -555,6 +636,27 @@ module.exports = {
                 kategori3: kategori_3,
                 terjual: 0
             });
+
+            //add product related
+            if (JSON.parse(related_products).length > 0) {
+                JSON.parse(related_products).map(async (related_product) => {
+                    await ec_product_related_relations.create({
+                        from_product_id: product.dataValues.id,
+                        to_product_id: related_product
+                    });
+                });
+            }
+
+            //add product cross sale
+            if (JSON.parse(cross_sale).length > 0) {
+                JSON.parse(cross_sale).map(async (cross_sale) => {
+                    await ec_product_cross_sale_relations.create({
+                        from_product_id: product.dataValues.id,
+                        to_product_id: cross_sale
+                    });
+                });
+            }
+
             return res.status(200).json({
                 status: 200,
                 message: 'Success Add Product',
@@ -698,7 +800,5 @@ module.exports = {
             });   
         }
     }
-
-
 }
         

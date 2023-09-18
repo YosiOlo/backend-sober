@@ -11,14 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      ec_products.belongsTo(models.ec_product_categories1, {foreignKey: 'kategori1', as: 'kategori_1'}),
-      ec_products.belongsTo(models.ec_product_categories2, {foreignKey: 'kategori2', as: 'kategori_2'}),
-      ec_products.belongsTo(models.ec_product_categories3, {foreignKey: 'kategori3', as: 'kategori_3'}),
-      ec_products.belongsTo(models.mp_stores, {foreignKey: 'store_id', as: 'store'}),
-      ec_products.belongsTo(models.ec_brands, {foreignKey: 'brand_id', as: 'brand'}),
-      ec_products.hasOne(models.ec_reviews, {foreignKey: 'product_id', as: 'reviews'}),
-      ec_products.hasMany(models.ec_carts, {foreignKey: 'product_id', as: 'carts'}),
-      ec_products.hasMany(models.ec_wish_lists, {foreignKey: 'product_id', as: 'wish_lists'})
+      ec_products.belongsTo(models.ec_product_categories1, {foreignKey: 'kategori1', as: 'kategori_1'});
+      ec_products.belongsTo(models.ec_product_categories2, {foreignKey: 'kategori2', as: 'kategori_2'});
+      ec_products.belongsTo(models.ec_product_categories3, {foreignKey: 'kategori3', as: 'kategori_3'});
+      ec_products.belongsTo(models.mp_stores, {foreignKey: 'store_id', as: 'store'});
+      ec_products.belongsTo(models.ec_brands, {foreignKey: 'brand_id', as: 'brand'});
+      ec_products.hasOne(models.ec_reviews, {foreignKey: 'product_id', as: 'reviews'});
+      ec_products.hasMany(models.ec_carts, {foreignKey: 'product_id', as: 'carts'});
+      ec_products.hasMany(models.ec_wish_lists, {foreignKey: 'product_id', as: 'wish_lists'});
+      ec_products.hasMany(models.ec_product_related_relations, {foreignKey: 'from_product_id', as: 'related_products'});
+      ec_products.hasMany(models.ec_product_cross_sale_relations, {foreignKey: 'from_product_id', as: 'cross_sale_products'});
     }
   }
   ec_products.init({
