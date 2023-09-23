@@ -235,7 +235,7 @@ module.exports = {
                     customer_id: id
                 },
                 attributes: {
-                    exclude: ['customer_id', 'id', 'bank_info', 'tax_info']
+                    exclude: ['customer_id', 'id']
                 }
             });
 
