@@ -244,7 +244,7 @@ module.exports = {
                     customer_id: id
                 },
                 attributes: {
-                    exclude: ['customer_id', 'id', 'idktp', 'ktp']
+                    exclude: ['customer_id', 'id']
                 }
             });
 
