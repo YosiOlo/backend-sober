@@ -21,6 +21,8 @@ module.exports = (sequelize, DataTypes) => {
       ec_products.hasMany(models.ec_wish_lists, {foreignKey: 'product_id', as: 'wish_lists'});
       ec_products.hasMany(models.ec_product_related_relations, {foreignKey: 'from_product_id', as: 'related_products'});
       ec_products.hasMany(models.ec_product_cross_sale_relations, {foreignKey: 'from_product_id', as: 'cross_sale_products'});
+      ec_products.hasMany(models.ec_product_variations, {foreignKey: 'configurable_product_id', as: 'product_variations'});
+      ec_products.hasMany(models.ec_product_with_attribute_set, {foreignKey: 'product_id', as: 'product_attribute_set'});
     }
   }
   ec_products.init({

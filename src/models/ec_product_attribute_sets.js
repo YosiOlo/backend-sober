@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      ec_product_attribute_sets.hasMany(models.ec_product_attributes, {foreignKey: 'attribute_set_id', as: 'set_data'});
     }
   }
   ec_product_attribute_sets.init({

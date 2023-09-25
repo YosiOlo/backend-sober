@@ -1,4 +1,5 @@
 const multer = require('multer');
+const sharp = require('sharp');
 const path = require('path');
 const {v4: uuidv4} = require('uuid');
 
@@ -10,7 +11,8 @@ const storage = (destination) => {
         },
         filename: (req, file, callback) => {
             callback(null, uuidv4()+ path.extname(file.originalname).split('.')[1] + path.extname(file.originalname))
-        }
+        },
+        
     });
 }
 

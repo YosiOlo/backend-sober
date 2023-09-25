@@ -1,8 +1,8 @@
 const {
     ec_customer, 
     mp_vendor_info, 
-    mp_stores,
-    meta_boxes,
+    mp_stores, 
+    meta_boxes, 
     Sequelize, 
     users
 } = require('../models');
@@ -51,34 +51,36 @@ module.exports = {
     },
 
     async updateProfile(req, res) {
-        const {id} = req.params;
-        const {name, phone, address} = req.body;
+        const {id} = req.user;
+        const {name, tanggal_lahir, telepon} = req.body;
 
-        if (id === '' || id === undefined) {
-            return res.status(400).json({message: 'Please fill id field'});
-        }
-
-        const user = await ec_customer.findOne({
-            where: {
-                id: id
+        try {
+            const user = await ec_customer.findOne({
+                where: {
+                    id: id
+                }
+            });
+    
+            if (!user) {
+                return res.status(400).json({message: 'User not found'});
             }
-        });
-
-        if (!user) {
-            return res.status(400).json({message: 'User not found'});
-        }
-
-        await ec_customer.update({
-            name: name,
-            phone: phone,
-            address: address
-        }, {
-            where: {
-                id: id
+    
+            const data = {
+                name: name.length > 0 ? name : user.name,
+                dob: tanggal_lahir.length > 0 ? tanggal_lahir : user.dob,
+                phone: telepon.length > 0 ? telepon : user.phone,
             }
-        });
 
-        return res.status(200).json({message: 'Profile updated'});
+            await ec_customer.update(data, {
+                where: {
+                    id: id
+                }
+            });
+    
+            return res.status(200).json({message: 'Profile updated'});
+        } catch(e) {
+            return res.status(500).json({message: e.message});
+        }
     },
 
     async listCustomer(req, res) {
@@ -225,7 +227,6 @@ module.exports = {
     },
 
     //vendor
-
     async vendorInfo(req, res) {
         const {id} = req.user;
 
@@ -561,6 +562,61 @@ module.exports = {
             });
 
             return res.status(200).json({message: 'Store profile info updated'});
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
+    },
+
+    async listVendor(req, res) {
+        try {
+            const vendor = await mp_stores.findAll({
+                where : {
+                    [Op.and]: [
+                        {
+                            [Op.not]: [
+                                {
+                                    address: null
+                                }
+                            ]
+                        },
+                        {
+                            [Op.not]: [
+                                {
+                                    state: null
+                                }
+                            ]
+                        },
+                        {
+                            [Op.not]: [
+                                {
+                                    city: null
+                                }
+                            ]
+                        },
+                        {
+                            [Op.not]: [
+                                {
+                                    zip_code: null
+                                }
+                            ]
+                        }
+                    ]
+                },
+                attributes: {
+                    exclude: ['customer_id', 'idktp', 'ktp', 'origin_shipment', 'branch_shipment']
+                },
+            });
+
+            if (!vendor) {
+                return res.status(400).json({message: 'Vendor not found'});
+            } else {
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success',
+                    data: vendor
+                });
+            }
+
         } catch (e) {
             return res.status(500).json({message: e.message});
         }

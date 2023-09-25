@@ -19,6 +19,7 @@ userRoutes.put('/vendor/profile', authMiddleware.verifyVendor, uploadMiddleware.
 userRoutes.put('/vendor/tambahan', authMiddleware.verifyVendor, uploadMiddleware.backgroundUpload, userController.vendorTambahan);
 
 //customer
+userRoutes.get('/list-toko', userController.listVendor)
 userRoutes.post('/change-pw', authMiddleware.verifyToken, userController.forgotPassword);
 
 //wishlist

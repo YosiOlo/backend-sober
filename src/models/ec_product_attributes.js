@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const ec_product_variations = require('./ec_product_variations');
 module.exports = (sequelize, DataTypes) => {
   class ec_product_attributes extends Model {
     /**
@@ -11,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      ec_product_attributes.hasMany(models.ec_product_variation_items, {foreignKey: 'attribute_id', as: 'var_items'})
+      ec_product_attributes.belongsTo(models.ec_product_attribute_sets, {foreignKey: 'attribute_set_id', as: 'set_data'})
     }
   }
   ec_product_attributes.init({

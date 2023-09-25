@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class ec_option_value extends Model {
+  class ec_global_option_value extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,23 +11,21 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      ec_option_value.belongsTo(models.ec_options, { foreignKey: 'option_id' });
+      ec_global_option_value.belongsTo(models.ec_global_options, { foreignKey: 'option_id' });
     }
   }
-  ec_option_value.init({
-    option_id: DataTypes.BIGINT,
-    option_value: DataTypes.TEXT,
+  ec_global_option_value.init({
+    option_id: DataTypes.INTEGER,
+    option_value: DataTypes.STRING,
     affect_price: DataTypes.DOUBLE,
     order: DataTypes.INTEGER,
-    affect_type: DataTypes.INTEGER,
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE
+    affect_type: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'ec_option_value',
-    tableName: 'ec_option_value',
+    modelName: 'ec_global_option_value',
+    tableName: 'ec_global_option_value',
     createdAt: 'created_at',
     updatedAt: 'updated_at'
   });
-  return ec_option_value;
+  return ec_global_option_value;
 };
