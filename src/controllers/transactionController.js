@@ -178,7 +178,7 @@ module.exports = {
         const storeId = req.user.dataValues.store.dataValues.id;
 
         try {
-            const revenue = await ec_orders.findAll({
+            const revenue = await ec_orders.findAndCountAll({
                 where: {
                     [Op.and]: [
                         {store_id: storeId},
@@ -207,7 +207,7 @@ module.exports = {
         const userId = req.user.id
 
         try {
-            const revenue = await mp_customer_revenues.findAll({
+            const revenue = await mp_customer_revenues.findAndCountAll({
                 where: {
                     customer_id: userId
                 },
