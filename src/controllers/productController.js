@@ -103,8 +103,8 @@ module.exports = {
                 order = 'ASC'
                 break;
             default:
-                orderby = 'created_at'
-                order = 'DESC'
+                orderby = 'id'
+                order = 'ASC'
                 break;
         }
 
@@ -497,8 +497,8 @@ module.exports = {
                 order = 'ASC'
                 break;
             default:
-                orderby = 'created_at'
-                order = 'DESC'
+                orderby = 'id'
+                order = 'ASC'
                 break;
         }
 
