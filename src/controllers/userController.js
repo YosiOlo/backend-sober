@@ -444,24 +444,26 @@ module.exports = {
             }
 
             const data = {
-                name: name.length > 0 ? name : store.name,
-                email: email.length > 0 ? email : store.email,
-                phone: telepon.length > 0 ? telepon : store.telepon,
-                address: address.length > 0 ? address : store.address,
-                country: country.length > 0 ? country : store.country,
-                state: state.length > 0 ? state : store.state,
-                city: city.length > 0 ? city : store.city,
-                zip_code: postal_code.length > 0 ? postal_code : store.postal_code,
-                description: description.length > 0 ? description : store.description,
-                content: content.length > 0 ? content : store.content,
-                company: company_name.length > 0 ? company_name : store.company_name,
-                kelurahan: kelurahan.length > 0 ? kelurahan : store.kelurahan,
-                kecamatan: kecamatan.length > 0 ? kecamatan : store.kecamatan,
-                idktp: id_ktp.length > 0 ? id_ktp : store.id_ktp,
+                name: name? name : store.name ,
+                email: email? email : store.email,
+                phone: telepon? telepon : store.telepon,
+                address: address? address : store.address,
+                country: country? country : store.country,
+                state: state? state : store.state,
+                city: city? city : store.city,
+                zip_code: postal_code? postal_code : store.postal_code,
+                description: description? description : store.description,
+                content: content? content : store.content,
+                company: company_name? company_name : store.company_name,
+                kelurahan: kelurahan? kelurahan : store.kelurahan,
+                kecamatan: kecamatan? kecamatan : store.kecamatan,
+                idktp: id_ktp? id_ktp : store.id_ktp,
                 ktp: ktp,
                 covers: cover,
                 logo: logo
             }
+
+            console.log(data)
 
             await mp_stores.update(data, {
                 where: {
