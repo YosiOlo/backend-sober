@@ -256,7 +256,11 @@ module.exports = {
                     status: 200,
                     message: 'Success',
                     data: {
-                        vendor_info: vendor,
+                        vendor_info: {
+                            ...vendor.dataValues,
+                            tax_info: JSON.parse(vendor.tax_info),
+                            bank_info: JSON.parse(vendor.bank_info)
+                        },
                         store_info: store
                     }
                 });
