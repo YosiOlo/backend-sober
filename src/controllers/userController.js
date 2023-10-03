@@ -357,7 +357,7 @@ module.exports = {
                 }
 
                 await mp_vendor_info.update({
-                    payment_info: JSON.stringify(data)
+                    bank_info: JSON.stringify(data)
                 }, {
                     where: {
                         customer_id: userId
