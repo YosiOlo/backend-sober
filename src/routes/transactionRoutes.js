@@ -9,8 +9,9 @@ transactionRoutes.get('/admin/:id', authMiddleware.verifyAdmin,transactionContro
 transactionRoutes.delete('/admin', authMiddleware.verifyAdmin,transactionController.destroy)
 
 //user
-transactionRoutes.get('/user', authMiddleware.verifyToken, transactionController.getUser);
-transactionRoutes.post('/user', authMiddleware.verifyToken);
+transactionRoutes.get('/users', authMiddleware.verifyToken, transactionController.getUser);
+transactionRoutes.get('/users/waiting', authMiddleware.verifyToken, transactionController.getUserWaiting);
+transactionRoutes.post('/users', authMiddleware.verifyToken);
 transactionRoutes.get('/cart', authMiddleware.verifyToken, cartController.cartUser);
 transactionRoutes.post('/cart/:id', authMiddleware.verifyToken, cartController.addCart);
 transactionRoutes.delete('/cart/:id', authMiddleware.verifyToken, cartController.deleteCart);

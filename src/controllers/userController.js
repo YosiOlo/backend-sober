@@ -1,5 +1,7 @@
 const {
     ec_customer, 
+    ec_customer_address,
+    ec_customer_waris,
     mp_vendor_info, 
     mp_stores, 
     meta_boxes, 
@@ -135,6 +137,266 @@ module.exports = {
         });
 
         return res.status(200).json(user);
+    },
+
+    async userInfo (req, res) {
+        const {id} = req.user;
+
+        try {
+            const user = await ec_customer.findOne({
+                where: {
+                    id: id
+                },
+                include: ['customer_address', 'customer_paket', 'customer_recently_viewed_product', {
+                    model: mp_stores,
+                    as: 'store',
+                    attributes: {
+                        exclude: ['customer_id', 'idktp', 'ktp', 'origin_shipment', 'branch_shipment']
+                    }
+                }, 'customer_review', 'customer_tier', 'customer_waris'],
+                attributes: {
+                    exclude: ['password', 'created_at', 'updated_at', 'deleted_at', 'remember_token', 'id']
+                }
+            });
+    
+            if(!user) {
+                return res.status(400).json({message: 'User not found'});
+            } else {
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success user info',
+                    data: user
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async userAddress(req, res) {
+        const {id} = req.user;
+
+        const {
+            nama,
+            email,
+            phone,
+            negara,
+            kota,
+            alamat,
+            kodepos,
+            is_default
+        } = req.body;
+
+        try {
+            const user = await ec_customer.findOne({
+                where: {
+                    id: id
+                }
+            });
+
+            if (!user) {
+                return res.status(400).json({message: 'User not found'});
+            }
+
+            if (nama?.length === 0 || email?.length === 0 || phone?.length === 0 || negara?.length === 0 || kota?.length === 0 || alamat?.length === 0 || kodepos?.length === 0) {
+                return res.status(400).json({message: 'Please fill all field'});
+            }
+
+            const data = {
+                name: nama,
+                email: email,
+                phone: phone,
+                country: negara,
+                city: kota,
+                address: alamat,
+                postal_code: kodepos,
+                is_default: is_default? (is_default === 'true' ? 1 : 0) : 0
+            }
+
+            await ec_customer_address.create(data);
+
+            return res.status(200).json({message: 'Address created'});
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
+    },
+
+    async userDeleteAddress (req, res) {
+        const {id} = req.user;
+        const {addressId} = req.params;
+
+        try {
+            const user = await ec_customer.findOne({
+                where: {
+                    id: id
+                }
+            });
+
+            if (!user) {
+                return res.status(400).json({message: 'User not found'});
+            }
+
+            const address = await ec_customer_address.findOne({
+                where: {
+                    id: addressId,
+                    customer_id: id
+                }
+            });
+
+            if(!address) {
+                return res.status(400).json({message: 'Address not found / not belong to user'});
+            } else {
+                await ec_customer_address.destroy({
+                    where: {
+                        id: addressId
+                    }
+                });
+
+                return res.status(200).json({message: 'Address deleted'});
+            }
+
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
+    },
+
+    async userUpdateAddress (req, res) {
+        const {id} = req.user;
+        const {addressId} = req.params;
+
+        const {
+            nama,
+            email,
+            phone,
+            negara,
+            kota,
+            alamat,
+            kodepos,
+            is_default
+        } = req.body;
+
+        try {
+            const user = await ec_customer.findOne({
+                where: {
+                    id: id
+                }
+            });
+
+            if (!user) {
+                return res.status(400).json({message: 'User not found'});
+            }
+
+            const address = await ec_customer_address.findOne({
+                where: {
+                    id: addressId,
+                    customer_id: id
+                }
+            });
+
+            if(!address) {
+                return res.status(400).json({message: 'Address not found / not belong to user'});
+            } else {
+                const data = {
+                    name: nama ? nama : address.name,
+                    email: email? email : address.email,
+                    phone: phone ? phone : address.phone,
+                    country: negara ? negara : address.country,
+                    city: kota ? kota : address.city,
+                    address: alamat ? alamat : address.address,
+                    postal_code: kodepos ? kodepos : address.postal_code,
+                    is_default: is_default? (is_default === 'true' ? 1 : 0) : address.is_default
+                }
+
+                await ec_customer_address.update(data, {
+                    where: {
+                        id: addressId
+                    }
+                });
+
+                return res.status(200).json({message: 'Address updated'});
+            }
+
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
+    },
+
+    async userAhliWaris (req, res) {
+        const userId = req.user.id;
+
+        const {
+            nama,
+            idktp,
+            phone,
+            alamat,
+            provinsi,
+            kota,
+            kecamatan,
+            is_same_ktp,
+            tg_alamat,
+            tg_provinsi,
+            tg_kota,
+            tg_kecamatan
+        } = req.body;
+
+        try {
+            const user = await ec_customer.findOne({
+                where: {
+                    id: userId
+                }
+            });
+
+            if (!user) {
+                return res.status(400).json({message: 'User not found'});
+            }
+
+            if (nama === '' || nama === undefined || idktp === '' || idktp === undefined || phone === '' || phone === undefined || alamat === '' || alamat === undefined || provinsi === '' || provinsi === undefined || kota === '' || kota === undefined || kecamatan === '' || kecamatan === undefined || is_same_ktp === '' || is_same_ktp === undefined) {
+                return res.status(400).json({message: 'Please fill all field'});
+            }
+
+            if (is_same_ktp === 'true') {
+                const data = {
+                    nama: nama,
+                    customer_id: userId,
+                    idktp: idktp,
+                    phone: phone,
+                    alamat: alamat,
+                    provinsi: provinsi,
+                    kota: kota,
+                    kecamatan: kecamatan,
+                    is_same_ktp: is_same_ktp
+                }
+
+                await ec_customer_waris.create(data);
+            } else {
+                if (tg_alamat === '' || tg_alamat === undefined || tg_provinsi === '' || tg_provinsi === undefined || tg_kota === '' || tg_kota === undefined || tg_kecamatan === '' || tg_kecamatan === undefined) {
+                    return res.status(400).json({message: 'Please fill all field'});
+                }
+
+                const data = {
+                    nama: nama,
+                    customer_id: userId,
+                    idktp: idktp,
+                    phone: phone,
+                    alamat: alamat,
+                    provinsi: provinsi,
+                    kota: kota,
+                    kecamatan: kecamatan,
+                    is_same_ktp: is_same_ktp,
+                    tg_alamat: tg_alamat,
+                    tg_provinsi: tg_provinsi,
+                    tg_kota: tg_kota,
+                    tg_kecamatan: tg_kecamatan
+                }
+                await ec_customer_waris.create(data);
+            }
+            return res.status(200).json({message: 'Ahli Waris created'});
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
     },
 
     //admin
@@ -381,7 +643,7 @@ module.exports = {
                 }
 
                 await mp_vendor_info.update({
-                    payment_info: JSON.stringify(data)
+                    bank_info: JSON.stringify(data)
                 }, {
                     where: {
                         customer_id: userId

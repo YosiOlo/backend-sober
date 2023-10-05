@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       ec_products.hasMany(models.ec_product_cross_sale_relations, {foreignKey: 'from_product_id', as: 'cross_sale_products'});
       ec_products.hasMany(models.ec_product_variations, {foreignKey: 'configurable_product_id', as: 'product_variations'});
       ec_products.hasMany(models.ec_product_with_attribute_set, {foreignKey: 'product_id', as: 'product_attribute_set'});
+      ec_products.hasOne(models.ec_product_label_products, {foreignKey: 'product_id', as: 'product_labels'});
     }
   }
   ec_products.init({

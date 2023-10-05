@@ -27,7 +27,10 @@ const {
     ec_product_tags,
     ec_product_tag_product,
     ec_product_with_attribute_set,
-    mp_stores
+    ec_product_labels,
+    ec_product_label_products,
+    mp_stores,
+    sequelize
 } = require('../models');
 const fs = require('fs');
 const Op = Sequelize.Op;
@@ -165,6 +168,19 @@ module.exports = {
                     attributes: {
                         exclude: ['from_product_id', 'id']
                     },
+                }, {
+                    model: ec_product_label_products,
+                    as: 'product_labels',
+                    attributes: {
+                        exclude: ['product_id', 'id']
+                    },
+                    include: [{
+                        model: ec_product_labels,
+                        as: 'deflabel',
+                        attributes: {
+                            exclude: ['id','created_at','updated_at']
+                        }
+                    }]
                 },'brand', 'reviews'],
                 attributes: {
                     exclude: ['content','description']
@@ -287,12 +303,24 @@ module.exports = {
     },
 
     async detailProduct(req, res) {
-        const {id} = req.params;
+        let id = req.params.id;
+
+        if (isNaN(id)) {
+            id = id.replace(/'/g, "''");
+        }
+        
         try {
             const product = await ec_products.findOne({
                 where: {
-                    id: id,
-                    is_variation: 0
+                    [Op.or]: [
+                        {
+                            name: Sequelize.where(Sequelize.fn('lower', Sequelize.fn('replace', Sequelize.col('ec_products.name'), ' ', '-')), 'LIKE', '%' + id + '%'),
+                            is_variation: 0
+                        },{
+                            id: isNaN(id) ? null : id,
+                            is_variation: 0
+                        }
+                    ]
                 },
                 include: [{
                     model: ec_product_categories1,
@@ -369,7 +397,20 @@ module.exports = {
                         }]
                     }]
                     
-                },'brand', 'reviews'],
+                }, {
+                    model: ec_product_label_products,
+                    as: 'product_labels',
+                    attributes: {
+                        exclude: ['product_id']
+                    },
+                    include: [{
+                        model: ec_product_labels,
+                        as: 'deflabel',
+                        attributes: {
+                            exclude: ['id','created_at','updated_at']
+                        }
+                    }]
+                }, 'brand', 'reviews'],
                 attributes: {
                     exclude: ['kategori1','kategori2','kategori3']
                 }

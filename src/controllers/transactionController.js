@@ -17,6 +17,8 @@ const {v4: uuidv4} = require('uuid');
 const bcrypt = require('bcrypt');
 
 module.exports = {
+
+    //admin 
     async index(req, res) {
         try {
             const {id} = req.params;
@@ -91,6 +93,24 @@ module.exports = {
         }
     },
 
+    async destroy(req, res) {
+        const {transId} = req.body
+
+        try {
+            const trans = await ec_orders.findByPk(transId);
+            if (trans === null) {
+                return res.status(404).json({message: 'Trans Not Found', status: 404});
+            } else {
+                await discount.destroy();
+                return res.status(200).json({message: 'Success Delete Transaction', status: 200 ,data: discount});
+            }
+        } catch (e) {
+            return res.status(500).json({status: 500, message: e.message});
+        }
+    },
+
+    //user
+
     async getUser(req, res) {
         const userId = req.user.id
         page = req.query.page || 1;
@@ -99,7 +119,9 @@ module.exports = {
 
         try {
             const trans = await ec_orders.findAndCountAll({
-                where: {customer_id: userId},
+                where: {
+                    user_id: userId
+                },
                 limit: parseInt(limit),
                 offset: offset,
                 order: [
@@ -122,21 +144,41 @@ module.exports = {
         }
     },
 
-    async destroy(req, res) {
-        const {transId} = req.body
+    async getUserWaiting(req, res) {
+        const userId = req.user.id;
 
         try {
-            const trans = await ec_orders.findByPk(transId);
-            if (trans === null) {
-                return res.status(404).json({message: 'Trans Not Found', status: 404});
-            } else {
-                await discount.destroy();
-                return res.status(200).json({message: 'Success Delete Transaction', status: 200 ,data: discount});
+            const waiting = await ec_orders.findAndCountAll({
+                where: {
+                    [Op.and]: [
+                        {user_id: userId},
+                        {
+                            '$payment_order.status$': 'pending'
+                        }
+                    ]
+                },
+                include: ['order_addresses','order_histories', 'order_product', 'order_referrals', 'order_returns', 'payment_order']
+            });
+            
+            if(waiting.count === 0){
+                return res.status(404).json({message: 'Waiting Payment Not Found', status: 404});
+            }else{
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success Get Waiting Payment',
+                    data: waiting
+                });
             }
-        } catch (e) {
-            return res.status(500).json({status: 500, message: e.message});
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
         }
     },
+
+    //vendor
 
     async orderReturn(req, res) {
         const storeId = req.user.dataValues.store.dataValues.id;

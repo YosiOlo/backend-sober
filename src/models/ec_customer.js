@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       ec_customer.hasMany(models.ec_orders, { foreignKey: 'user_id', as: 'customer_order' });
       ec_customer.belongsTo(models.ec_paket_master, { foreignKey: 'level', as: 'customer_tier' });
       ec_customer.hasMany(models.member_withdrawal, { foreignKey: 'customer_id', as: 'customer_withdrawal' });
+      ec_customer.hasMany(models.ec_customer_waris, { foreignKey: 'customer_id', as: 'customer_waris' });
     }
   }
   ec_customer.init({
