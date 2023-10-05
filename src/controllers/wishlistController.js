@@ -12,7 +12,7 @@ module.exports = {
                 include: {
                     model: ec_products,
                     as: 'product',
-                    attributes: ['id', 'name', 'description', 'price', 'sale_price', 'images']
+                    attributes: ['id', 'name', 'description', 'price', 'sale_price', 'images','quantity']
                 },
             });
             if (wishlist.length === 0) {
