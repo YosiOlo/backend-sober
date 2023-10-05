@@ -64,35 +64,6 @@ module.exports = {
         }
     },
 
-    async getVendor(req, res) {
-        const vendorId = req.user.dataValues.store.dataValues.id;
-
-        page = req.query.page || 1;
-        limit = req.query.limit || 20;
-        offset = (page - 1) * limit;
-
-        try {
-            const trans = await ec_orders.findAndCountAll({
-                where: {store_id: vendorId},
-                limit: parseInt(limit),
-                offset: offset,
-                include: ['order_addresses','order_histories', 'order_product', 'order_referrals', 'order_returns', 'payment_order']
-            });
-            return res.status(200).json({
-                status: 200,
-                message: 'Success Get Transactions',
-                data: trans
-            });
-        }
-        catch (error) {
-            return res.status(500).json({
-                status: 500,
-                message: 'Internal Server Error',
-                data: error
-            });
-        }
-    },
-
     async destroy(req, res) {
         const {transId} = req.body
 
@@ -179,6 +150,63 @@ module.exports = {
     },
 
     //vendor
+    async getVendor(req, res) {
+        const vendorId = req.user.dataValues.store.dataValues.id;
+
+        page = req.query.page || 1;
+        limit = req.query.limit || 20;
+        offset = (page - 1) * limit;
+
+        try {
+            const trans = await ec_orders.findAndCountAll({
+                where: {store_id: vendorId},
+                limit: parseInt(limit),
+                offset: offset,
+                include: ['order_addresses', 'payment_order']
+            });
+            return res.status(200).json({
+                status: 200,
+                message: 'Success Get Transactions',
+                data: trans
+            });
+        }
+        catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
+        }
+    },
+
+    async getVendorById(req, res) {
+        const vendorId = req.user.dataValues.store.dataValues.id;
+        const id = req.params.id;
+
+        try {
+            const trans = await ec_orders.findOne({
+                where: {
+                    [Op.and]: [
+                        {store_id: vendorId},
+                        {id: id}
+                    ]
+                },
+                include: ['order_addresses','order_histories', 'order_product', 'order_referrals', 'order_returns', 'payment_order']
+            });
+
+            if(!trans) {
+                return res.status(404).json({message: 'Transaction Not Found', status: 404});
+            } else {
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success Get Transaction By Id',
+                    data: trans
+                });
+            }
+        } catch (error) {
+            return res.status(500).json({status: 500, message: error.message});
+        }
+    },
 
     async orderReturn(req, res) {
         const storeId = req.user.dataValues.store.dataValues.id;
