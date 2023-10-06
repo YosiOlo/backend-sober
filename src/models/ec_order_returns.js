@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       ec_order_returns.belongsTo(models.ec_orders, { foreignKey: 'order_id' });
+      ec_order_returns.hasOne(models.ec_order_return_items, { foreignKey: 'order_return_id', as: 'return_items' })
     }
   }
   ec_order_returns.init({

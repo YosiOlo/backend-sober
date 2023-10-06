@@ -244,6 +244,41 @@ module.exports = {
 
     },
 
+    async orderReturnById(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {id} = req.params;
+
+        try {
+            const returns = await ec_order_returns.findOne({
+                where: {
+                    store_id: storeId,
+                    id: id
+                },
+                include: [{
+                    model: ec_orders,
+                    include: ['customer_order','order_product']
+                }, 'return_items']
+            });
+            
+            if(!returns) {
+                return res.status(404).json({message: 'Return Not Found', status: 404});
+            } else {
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success Get Returns By Id',
+                    data: returns
+                });
+            }
+
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                data: error
+            });
+        }
+    },
+
     async vendorRevenue(req, res) {
         const storeId = req.user.dataValues.store.dataValues.id;
 

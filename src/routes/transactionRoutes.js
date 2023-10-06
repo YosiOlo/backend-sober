@@ -21,6 +21,7 @@ transactionRoutes.put('/cart/:id', authMiddleware.verifyToken, cartController.up
 transactionRoutes.get('/vendor', authMiddleware.verifyVendor, transactionController.getVendor);
 transactionRoutes.get('/vendor/details/:id', authMiddleware.verifyVendor, transactionController.getVendorById);
 transactionRoutes.get('/vendor/returns', authMiddleware.verifyVendor, transactionController.orderReturn);
+transactionRoutes.get('/vendor/returns/details/:id', authMiddleware.verifyVendor, transactionController.orderReturnById);
 transactionRoutes.get('/vendor/revenue', authMiddleware.verifyVendor, transactionController.vendorRevenue);
 transactionRoutes.get('/vendor/history', authMiddleware.verifyVendor, transactionController.vendorRevenueHistory);
 transactionRoutes.get('/vendor/withdrawal', authMiddleware.verifyVendor, transactionController.vendorWithdrawal);
