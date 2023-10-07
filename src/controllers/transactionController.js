@@ -9,6 +9,7 @@ const {
     ec_order_addresses,
     ec_shipments,
     ec_shipment_histories,
+    ec_customer,
     mp_vendor_info,
     mp_customer_revenues
 } = require('../models');
@@ -191,7 +192,11 @@ module.exports = {
                         {id: id}
                     ]
                 },
-                include: ['order_addresses','order_histories', 'order_product', 'order_referrals', 'order_returns', 'payment_order']
+                include: ['order_addresses','order_histories', 'order_product', 'order_referrals', 'order_returns', 'payment_order', {
+                    model: ec_customer,
+                    as: 'customer_order',
+                    attributes: ['avatar']
+                }]
             });
 
             if(!trans) {
@@ -256,7 +261,15 @@ module.exports = {
                 },
                 include: [{
                     model: ec_orders,
-                    include: ['customer_order','order_product']
+                    include: [{
+                        model: ec_customer,
+                        as: 'customer_order',
+                        attributes: ['name','email','phone','avatar'],
+                    },'order_product',{
+                        model: ec_order_addresses,
+                        as: 'order_addresses',
+                        attributes: ['address','city','state','zip_code']
+                    }]
                 }, 'return_items']
             });
             
