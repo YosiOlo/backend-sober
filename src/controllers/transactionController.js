@@ -196,6 +196,10 @@ module.exports = {
                     model: ec_customer,
                     as: 'customer_order',
                     attributes: ['avatar']
+                }, {
+                    model: ec_shipments,
+                    as: 'order_shipments',
+                    attributes: ['id','status','tracking_id','tracking_link','created_at'],
                 }]
             });
 
