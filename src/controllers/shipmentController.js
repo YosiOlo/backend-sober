@@ -174,11 +174,16 @@ module.exports = {
                 })
             }
 
-            shipment.status = status
-            await shipment.save()
+            await shipment.update({
+                status: status
+            },{
+                where: {
+                    id: shipmentId
+                }
+            })
 
             return res.status(200).json({
-                status: 'success',
+                status: 'success update shipment',
                 data: shipment
             })
         }
