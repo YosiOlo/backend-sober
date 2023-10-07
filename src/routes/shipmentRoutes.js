@@ -10,6 +10,6 @@ shipmentRoutes.get('/:id', authMiddleware.verifyToken, shipmentController.detail
 
 shipmentRoutes.get('/vendor/list', authMiddleware.verifyVendor, shipmentController.vendorShipment)
 shipmentRoutes.get('/vendor/:id', authMiddleware.verifyVendor, shipmentController.detailShipment)
-shipmentRoutes.put('/vendor/:id', authMiddleware.verifyVendor, shipmentController.updateShipment)
+shipmentRoutes.put('/vendor/update/:id', authMiddleware.verifyVendor, shipmentController.updateShipment)
 
 module.exports = shipmentRoutes
