@@ -183,7 +183,7 @@ module.exports = {
             })
 
             return res.status(200).json({
-                status: 'success update shipment',
+                message: 'success update shipment',
                 status: 200
             })
         }
