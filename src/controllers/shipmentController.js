@@ -157,13 +157,13 @@ module.exports = {
     },
 
     async updateShipment(req, res) {
-        const shipmentId = req.params.id
+        const orderId = req.params.id
         const {status} = req.body
 
         try {
             const shipment = await ec_shipments.findOne({
                 where: {
-                    id: shipmentId
+                    order_id: orderId
                 }
             })
 
@@ -178,13 +178,13 @@ module.exports = {
                 status: status
             },{
                 where: {
-                    id: shipmentId
+                    order_id: orderId
                 }
             })
 
             return res.status(200).json({
                 status: 'success update shipment',
-                data: shipment
+                status: 200
             })
         }
         catch (err) {
