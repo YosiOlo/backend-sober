@@ -81,6 +81,11 @@ module.exports = {
         page = req.query.page || 1;
         limit = req.query.limit || 10;
         search = req.query.search || '';
+
+        kategori = req.query.kategori || '';
+        kategori_2 = req.query.kategori_2 || '';
+        kategori_3 = req.query.kategori_3 || '';
+
         offset = (page - 1) * limit;
 
         let orderby , order;
@@ -124,6 +129,24 @@ module.exports = {
                                 },{
                                     description: {
                                         [Op.iLike]: `%${search}%`
+                                    }
+                                }
+                            ]
+                        },{
+                            [Op.and]: [
+                                {
+                                    kategori1: {
+                                        [Op.iLike]: `%${kategori}%`
+                                    }
+                                },
+                                {
+                                    kategori2: {
+                                        [Op.iLike]: `%${kategori_2}%`
+                                    }
+                                },
+                                {
+                                    kategori3: {
+                                        [Op.iLike]: `%${kategori_3}%`
                                     }
                                 }
                             ]
