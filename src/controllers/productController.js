@@ -132,21 +132,43 @@ module.exports = {
                                     }
                                 }
                             ]
-                        },{
+                        },
+                        {
                             [Op.and]: [
                                 {
                                     kategori1: {
-                                        [Op.iLike]: `%${kategori}%`
+                                        [Op.or]: [
+                                            {
+                                                [Op.iLike]: `%${kategori}%`
+                                            },
+                                            {
+                                                [Op.eq]: null
+                                            }
+                                        ]
                                     }
                                 },
                                 {
                                     kategori2: {
-                                        [Op.iLike]: `%${kategori_2}%`
+                                        [Op.or]: [
+                                            {
+                                                [Op.iLike]: `%${kategori_2}%`
+                                            },
+                                            {
+                                                [Op.eq]: null
+                                            }
+                                        ]
                                     }
                                 },
                                 {
                                     kategori3: {
-                                        [Op.iLike]: `%${kategori_3}%`
+                                        [Op.or]: [
+                                            {
+                                                [Op.iLike]: `%${kategori_3}%`
+                                            },
+                                            {
+                                                [Op.eq]: null
+                                            }
+                                        ]
                                     }
                                 }
                             ]
