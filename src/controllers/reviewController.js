@@ -287,9 +287,25 @@ module.exports = {
                     is_reply: false
                 });
 
+                try {
+                    //update is_reply parent review to false
+                    const update = await ec_reviews.update({
+                        is_reply: false
+                    }, {
+                        where: {
+                            id: id
+                        }
+                    });
+                } catch (error) {
+                    return res.status(500).json({
+                        status: 500,
+                        message: 'Internal Server Error, Failed Update Parent Review',
+                    });
+                }
+
                 return res.status(200).json({
                     status: 200,
-                    message: 'Success Reply Review',
+                    message: 'Success Reply Review By Vendor',
                     data: review
                 });
             }
@@ -297,7 +313,7 @@ module.exports = {
         catch (error) {
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
+                message: 'Internal Server Error, Failed Create Reply Review',
                 data: error
             });
         }
@@ -360,10 +376,8 @@ module.exports = {
     async userReview(req, res) {
         const userId = req.user.id;
         const orderId = req.params.orderId;
-        const {
-            star,
-            comment
-        } = req.body;
+        const { star, comment } = req.body;
+        const images = req.file? req.file.path : null;
 
         try {
             //check transaction is complete
@@ -380,17 +394,36 @@ module.exports = {
             if (!order) {
                 return res.status(404).json({
                     status: 404,
-                    message: 'Order Not Found / Order Not Complete',
+                    message: 'Order Not Found / Order Not Complete Yet',
                     data: {}
                 });
             } else {
-                const review = await ec_reviews.create({
-                    comment: comment,
-                    star: star,
-                    product_id: order.order_product.product_id,
-                    customer_id: userId,
-                    is_reply: true
-                });
+                try {
+                    if(images != null) {
+                        const review = await ec_reviews.create({
+                            comment: comment,
+                            star: star,
+                            product_id: order.order_product.product_id,
+                            customer_id: userId,
+                            is_reply: true,
+                            images: images.replace('public/', '')
+                        });
+                    } else {
+                        const review = await ec_reviews.create({
+                            comment: comment,
+                            star: star,
+                            product_id: order.order_product.product_id,
+                            customer_id: userId,
+                            is_reply: true,
+                        });
+                    }
+                } catch (error) {
+                    return res.status(500).json({
+                        status: 500,
+                        message: 'Internal Server Error, Failed Insert Review',
+                        data: error
+                    });
+                }
 
                 return res.status(200).json({
                     status: 200,
@@ -401,7 +434,7 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
+                message: 'Internal Server Error, Failed Create Review',
                 data: error
             });   
         }
@@ -414,6 +447,8 @@ module.exports = {
             star,
             comment
         } = req.body;
+
+        const images = req.file? req.file.path : null;
 
         try {
             //check transaction is complete
@@ -428,18 +463,30 @@ module.exports = {
             if (!review) {
                 return res.status(404).json({
                     status: 404,
-                    message: 'Review Not Found / Review Not Reply',
+                    message: 'Review Not Found / Review Cannot Replied',
                     data: {}
                 });
             } else {
-                const review = await ec_reviews.update({
-                    comment: comment,
-                    star: star,
-                }, {
-                    where: {
-                        id: reviewId
-                    }
-                });
+                if(images != null) {
+                    const review = await ec_reviews.update({
+                        comment: comment,
+                        star: star,
+                        images: images.replace('public/', '')
+                    }, {
+                        where: {
+                            id: reviewId
+                        }
+                    });
+                } else {
+                    const review = await ec_reviews.update({
+                        comment: comment,
+                        star: star,
+                    }, {
+                        where: {
+                            id: reviewId
+                        }
+                    });
+                }
 
                 return res.status(200).json({
                     status: 200,
@@ -450,7 +497,7 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
+                message: 'Internal Server Error, Failed Update Review',
                 data: error
             });   
         }

@@ -1,6 +1,8 @@
 const { where } = require('sequelize');
 const {
     ec_product_categories, 
+    ec_customer,
+    ec_customer_recently_viewed_products,
     ec_products, 
     Sequelize,
     ec_options, 
@@ -33,6 +35,7 @@ const {
     sequelize
 } = require('../models');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 const Op = Sequelize.Op;
 
 module.exports = {
@@ -349,6 +352,7 @@ module.exports = {
 
     async detailProduct(req, res) {
         let id = req.params.id;
+        const tokens = req.cookies? req.cookies.token_remember : null;
 
         if (isNaN(id)) {
             id = id.replace(/'/g, "''");
@@ -460,6 +464,25 @@ module.exports = {
                     exclude: ['kategori1','kategori2','kategori3']
                 }
             });
+            try {
+                if (tokens != null) {
+                    const decoded = jwt.verify(tokens, process.env.JWT_SECRET);
+                    const userId = decoded.id;
+                    const user = await ec_customer.findOne({
+                        where: {
+                            id: userId
+                        }
+                    });
+                    if (user) {
+                        await ec_customer_recently_viewed_products.create({
+                            product_id: product.dataValues.id,
+                            customer_id: userId
+                        });
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
             if (!product) {
                 return res.status(404).json({
                     status: 404,

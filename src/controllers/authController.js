@@ -2,13 +2,14 @@ const {
     ec_customer, 
     users, 
     ec_paket_master,
+    mp_stores,
+    mp_vendor_info,
     Sequelize
 } = require('../models');
 const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const NodeMailer = require('nodemailer');
-const { reset } = require('nodemon');
 
 module.exports = {
     async signup(req, res) {
@@ -62,6 +63,25 @@ module.exports = {
                 email_verify_token: token,
                 level: tier ? tier : null
             });
+
+            try {
+                if(is_vendor == 1 || is_vendor == "true"){
+                    await mp_stores.create({
+                        name: nama,
+                        email: email,
+                        customer_id: newUser.id,
+                        status: "published",
+                    });
+                    await mp_vendor_info.create({
+                        customer_id: newUser.id,
+                    });
+                }
+            } catch (e) {
+                return res.status(500).json({
+                    message: "adding additional data failed",
+                    status: 500,
+                });
+            }
 
             const transporter = NodeMailer.createTransport({
                 service: 'gmail',
