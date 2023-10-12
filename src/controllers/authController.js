@@ -234,8 +234,11 @@ module.exports = {
         });
 
         if (!user) {
-            return res.status(400).json({message: 'Email not found'});
+            return res.status(400).json({message: 'Email not found!'});
+        } else if(user.status !== "activated") {
+            return res.status(400).json({message: 'Email not verified yet!'});
         }
+
         if (is_remember) {
             const tokens = jwt.sign({id: user.id, email: email}, process.env.JWT_SECRET, {expiresIn: '7d'});
             await ec_customer.update({

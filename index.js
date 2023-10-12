@@ -10,7 +10,7 @@ app.use(cors({
     origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
-    allowedHeaders: "Content-Type, Authorization, Origin, X-Requested-With, Accept"
+    allowedHeaders: "Content-Type, Authorization, Origin, X-Requested-With, Accept, Cookie"
 }));
 const mainRoutes = require("./src/routes/");
 app.use(express.urlencoded({ extended: true }));
