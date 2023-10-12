@@ -2,7 +2,7 @@ const { where } = require('sequelize');
 const {
     ec_product_categories, 
     ec_customer,
-    ec_customer_recently_viewed_products,
+    ec_customer_recently_viewed_product,
     ec_products, 
     Sequelize,
     ec_options, 
@@ -474,7 +474,7 @@ module.exports = {
                         }
                     });
                     if (user) {
-                        await ec_customer_recently_viewed_products.create({
+                        await ec_customer_recently_viewed_product.create({
                             product_id: product.dataValues.id,
                             customer_id: userId
                         });
