@@ -85,6 +85,7 @@ module.exports = {
             end_date,
             quantity, 
             value,
+            max_discount_amount,
             can_use_with_promotion,  
             product_quantity, 
             type_option, 
@@ -112,6 +113,22 @@ module.exports = {
         if (never_expired) {
             end_date = null;
         }
+        
+        switch (type_option) {
+            case 'percentage':
+                type_option = 'percentage';
+                break;
+            case 'nominal':
+                type_option = 'nominal';
+                max_discount_amount = null;
+                break;
+            case 'shipping':
+                type_option = 'shipping';
+                break;
+            default:
+                type_option = 'percentage';
+                break;
+        }
 
         try {
             const discount = await ec_discount.create({
@@ -123,6 +140,7 @@ module.exports = {
                 value, 
                 type: 'coupon', 
                 can_use_with_promotion,  
+                max_discount_amount,
                 product_quantity, 
                 type_option, 
                 target, 

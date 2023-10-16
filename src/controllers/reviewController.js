@@ -319,6 +319,100 @@ module.exports = {
         }
     },
 
+    async vendorDelete(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {id} = req.params;
+
+        try {
+            const review = await ec_reviews.findOne({
+                where: {
+                    [Op.and]: [
+                        {
+                            id: id
+                        },
+                        {
+                            "$product.store_id$": storeId
+                        }
+                    ]
+                },
+                include: ['product']
+            });
+            if (!review) {
+                return res.status(404).json({
+                    status: 404,
+                    message: 'Review Not Found / Review Not Match With Store',
+                    data: {}
+                });
+            } else {
+                const review = await ec_reviews.destroy({
+                    where: {
+                        id: id
+                    }
+                });
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success Delete Review',
+                    data: review
+                });
+            }
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error, Failed Delete Review',
+                data: error
+            });
+        }
+    },
+
+    async vendorUpdate(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {id} = req.params;
+        const {reply, star} = req.body;
+
+        try {
+            const review = await ec_reviews.findOne({
+                where: {
+                    [Op.and]: [
+                        {
+                            id: id
+                        },
+                        {
+                            "$product.store_id$": storeId
+                        }
+                    ]
+                },
+                include: ['product']
+            });
+            if (!review) {
+                return res.status(404).json({
+                    status: 404,
+                    message: 'Review Not Found / Review Not Match With Store',
+                    data: {}
+                });
+            } else {
+                const review = await ec_reviews.update({
+                    comment: req.body.comment,
+                    rating: req.body.rating,
+                }, {
+                    where: {
+                        id: id
+                    }
+                });
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Success Update Review',
+                    data: review
+                });
+            }
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error, Failed Update Review',
+                data: error
+            });
+        }
+    },
+
     async userList (req, res) {
         const userId = req.user.id;
 
@@ -380,6 +474,14 @@ module.exports = {
         const images = req.file? req.file.path : null;
 
         try {
+            //check form
+            if(!star || !comment) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please Fill All Form',
+                    data: {}
+                });
+            }
             //check transaction is complete
             const order = await ec_orders.findOne({
                 where: {
@@ -451,14 +553,22 @@ module.exports = {
         const images = req.file? req.file.path : null;
 
         try {
-            //check transaction is complete
             const review = await ec_reviews.findOne({
                 where: {
                     id: reviewId,
                     customer_id: userId,
-                    is_reply: true
+                    is_reply: 1
                 }
             });
+
+            //check already pass 7 days
+            if(review.created_at < new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000))) {
+                return res.status(404).json({
+                    status: 404,
+                    message: 'Review Cannot Update After 7 Days',
+                    data: {}
+                });
+            }
 
             if (!review) {
                 return res.status(404).json({

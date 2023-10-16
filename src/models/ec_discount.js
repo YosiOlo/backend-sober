@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     type_option: DataTypes.STRING,
     target: DataTypes.STRING,
     min_order_price: DataTypes.DECIMAL,
+    max_discount_amount: DataTypes.DOUBLE,
     store_id: DataTypes.INTEGER,
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE

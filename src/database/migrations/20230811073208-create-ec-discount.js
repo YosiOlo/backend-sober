@@ -30,6 +30,9 @@ module.exports = {
       value: {
         type: Sequelize.DOUBLE
       },
+      max_discount_amount: {
+        type: Sequelize.DOUBLE
+      },
       type: {
         type: Sequelize.STRING
       },

@@ -11,6 +11,7 @@ reviewRoutes.put('/admin/:id', authMiddleware.verifyToken, reviewController.upda
 
 reviewRoutes.get('/vendor/list', authMiddleware.verifyVendor, reviewController.vendorReview);
 reviewRoutes.post('/vendor/reply/:id', authMiddleware.verifyVendor, reviewController.vendorReply);
+reviewRoutes.delete('/vendor/:id', authMiddleware.verifyVendor, reviewController.deleteReview);
 
 reviewRoutes.get('/list', authMiddleware.verifyToken, reviewController.userList);
 reviewRoutes.post('/:orderId', authMiddleware.verifyToken, uploadMiddleware.reviewUpload, reviewController.userReview);
