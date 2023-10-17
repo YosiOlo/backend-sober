@@ -94,7 +94,7 @@ module.exports = {
         const never_expired = req.body.never_expired || false;
 
         //check field
-        if (!title || !code || !value || !type_option ) {
+        if (!title || !code || !value || !type_option || !start_date || !max_discount_amount ) {
             return res.status(400).json({message: 'Please fill all required field', status: 400});
         } else if (start_date > end_date) {
             return res.status(400).json({message: 'Start date must be less than end date', status: 400});
