@@ -131,7 +131,7 @@ module.exports = {
         }
 
         try {
-            const discount = await ec_discount.create({
+            const data = {
                 title, 
                 code, 
                 start_date, 
@@ -145,10 +145,15 @@ module.exports = {
                 type_option, 
                 target, 
                 store_id : storeId
-            });
+            }
+            const discount = await ec_discount.create(data);
             return res.status(201).json({message: 'Success', status: 201 ,data: discount});
         } catch (e) {
-            return res.status(500).json({message: e.message, status: 500});
+            if (e instanceof Sequelize.ValidationError) {
+                return res.status(400).json({message: "code must unique", status: 400});
+            } else {
+                return res.status(500).json({message: e.message, status: 500});
+            }
         }
     },
 
