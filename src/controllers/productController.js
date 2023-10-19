@@ -274,13 +274,28 @@ module.exports = {
     },
 
     async listProductsByVendor(req, res) {
-        const {id} = req.params;
+        let {id} = req.params;
 
+        if (isNaN(id)) {
+            id = id.replace(/'/g, "''");
+        }
+        
         try {
             const product = await ec_products.findAll({
                 where: {
-                    store_id: id,
-                    is_variation: 0
+                    [Op.or]: [
+                        {
+                            is_variation: 0,
+                            '$store.name$': Sequelize.where(Sequelize.fn('lower', Sequelize.fn('replace', Sequelize.col('store.name'), ' ', '-')), 'LIKE', '%' + id + '%'),
+                            [Op.not]: {
+                                store_id: null
+                            }
+                        },
+                        {
+                            is_variation: 0,
+                            store_id: isNaN(id) ? null : id,
+                        }
+                    ]
                 },
                 include: [{
                     model: ec_product_categories1,
