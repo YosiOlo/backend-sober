@@ -34,6 +34,28 @@ module.exports = {
         }
     },
 
+    async vendorById(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {id} = req.params;
+        try {
+            const discount = await ec_discount.findOne({
+                where: {
+                    [Op.and]: [
+                        {id: id},
+                        {store_id: storeId}
+                    ]
+                }
+            });
+            if (discount === null) {
+                return res.status(404).json({message: 'Discount Not Found', status: 404});
+            } else {
+                return res.status(200).json({message: 'Success get discount by id', status: 200 ,data: discount});
+            }
+        } catch (e) {
+            return res.status(500).json({message: e.message});
+        }
+    },
+
     async stillValid(req, res) {
         try {
             const discount = await ec_discount.findAll({
