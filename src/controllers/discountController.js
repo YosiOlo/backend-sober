@@ -180,17 +180,46 @@ module.exports = {
     },
 
     async updateDiscount(req, res) {
-        const {title, code, start_date, end_date, quantity, value, type, can_use_with_promotion, discount_on, product_quantity, type_option, target, min_order_price, store_id} = req.body;
+        const {
+            title, 
+            code, 
+            start_date, 
+            end_date, 
+            quantity, 
+            value, 
+            max_discount_amount,
+        } = req.body;
         try {
-            const discount = await ec_discount.findByPk(req.params.id);
-            if (discount === null) {
+            const discount = await ec_discount.findOne({
+                where: {
+                    id: req.params.id
+                }
+            
+            });
+
+            if (!discount) {
                 return res.status(404).json({message: 'Discount Not Found', status: 404});
             } else {
-                await discount.update({title, code, start_date, end_date, quantity, value, type, can_use_with_promotion, discount_on, product_quantity, type_option, target, min_order_price, store_id});
-                return res.status(200).json({message: 'Success', status: 200 ,data: discount});
+                //check start date and end date
+                if (start_date && end_date) {
+                    if (start_date > end_date) {
+                        return res.status(400).json({message: 'Start date must be less than end date', status: 400});
+                    }
+                    //check start date higher than today
+                    const today = new Date();
+                    if (start_date < today) {
+                        return res.status(400).json({message: 'Start date must be higher than today', status: 400});
+                    }
+                }
+                await discount.update({title, code, start_date, end_date, quantity, value, max_discount_amount});
+                return res.status(200).json({message: 'Success update discount', status: 200 ,data: discount});
             }
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            if(e instanceof Sequelize.ValidationError) {
+                return res.status(400).json({message: "code must unique", status: 400});
+            } else {
+                return res.status(500).json({message: e.message, status: 500});
+            }
         }
     },
 
