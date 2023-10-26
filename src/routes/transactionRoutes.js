@@ -1,12 +1,17 @@
 const transactionRoutes =  require("express").Router();
 const transactionController = require("../controllers/transactionController");
+const withdrawalController = require("../controllers/withdrawalController");
 const cartController = require("../controllers/cartController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
 //admin
 transactionRoutes.get('/admin', authMiddleware.verifyAdmin, transactionController.getAll);
 transactionRoutes.get('/admin/:id', authMiddleware.verifyAdmin,transactionController.index);
-transactionRoutes.delete('/admin', authMiddleware.verifyAdmin,transactionController.destroy)
+transactionRoutes.get('/admin/withdrawal', authMiddleware.verifyAdmin, withdrawalController.getAll);    
+transactionRoutes.get('/admin/user-withdrawal/:customerId', authMiddleware.verifyAdmin, withdrawalController.getAllByCustomerId);
+transactionRoutes.delete('/admin/:transId', authMiddleware.verifyAdmin,transactionController.destroy);
+transactionRoutes.put('/admin/accept-withdrawal/:withdrawalId', authMiddleware.verifyAdmin, withdrawalController.acceptWidhrawal);
+transactionRoutes.put('/admin/decline-withdrawal/:withdrawalId', authMiddleware.verifyAdmin, withdrawalController.declineWithdrawal);
 
 //user
 transactionRoutes.get('/users', authMiddleware.verifyToken, transactionController.getUser);

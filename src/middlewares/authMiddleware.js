@@ -89,7 +89,7 @@ module.exports = {
 
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const admin = users.findOne({
+            const admin = await users.findOne({
                 where: {
                     email: decoded.email
                 }

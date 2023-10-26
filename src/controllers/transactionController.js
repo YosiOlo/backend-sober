@@ -66,7 +66,7 @@ module.exports = {
     },
 
     async destroy(req, res) {
-        const {transId} = req.body
+        const {transId} = req.params
 
         try {
             const trans = await ec_orders.findByPk(transId);
