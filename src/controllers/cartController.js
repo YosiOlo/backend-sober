@@ -1,3 +1,4 @@
+const { parse } = require('dotenv');
 const {ec_carts, Sequelize, ec_product_attributes, ec_products} = require('../models');
 const Op = Sequelize.Op;
 
@@ -42,7 +43,9 @@ module.exports = {
                         ...cart.dataValues,
                         product: {
                             ...cart.product.dataValues,
-                            images: images
+                            images: images,
+                            price: `Rp ${cart.product.dataValues.price.toLocaleString('id-ID')}`,
+                            total_price: `Rp ${(cart.product.dataValues.price * cart.qty).toLocaleString('id-ID')}`
                         }
                     });
                 });
