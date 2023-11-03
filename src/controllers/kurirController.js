@@ -1,5 +1,6 @@
 const {jne_branchs, jne_destinations, jne_origins, Sequelize} = require('../models')
 const Op = Sequelize.Op
+const axios = require('axios')
 
 module.exports = {
     async listBranchs(req, res) {
@@ -25,8 +26,10 @@ module.exports = {
             })
         }
         catch (err) {
+            console.log(err)
             res.status(500).send({
-                error: err
+                message: 'internal server error',
+                status: 500,
             })
         }
     },
@@ -44,6 +47,9 @@ module.exports = {
                         [Op.iLike]: `%${search}%`
                     }
                 },
+                attributes: {
+                    exclude: ['id']
+                },
                 limit: parseInt(limit),
                 offset: parseInt(offset)
             })
@@ -54,8 +60,10 @@ module.exports = {
             })
         }
         catch (err) {
+            console.log(err)
             res.status(500).send({
-                error: err
+                message: 'internal server error',
+                status: 500,
             })
         }
     },
@@ -69,11 +77,14 @@ module.exports = {
         try {
             const destinations = await jne_destinations.findAndCountAll({
                 where: {
-                    destination_name: {
+                    city_name: {
                         [Op.iLike]: `%${search}%`
                     }
                 },
                 limit: parseInt(limit),
+                attributes: {
+                    exclude: ['id']
+                },
                 offset: parseInt(offset)
             })
             res.status(200).send({
@@ -83,8 +94,72 @@ module.exports = {
             })
         }
         catch (err) {
+            console.log(err)
             res.status(500).send({
-                error: err
+                message: 'internal server error',
+                status: 500,
+            })
+        }
+    },
+
+    async checkOngkir(req, res) {
+        try {
+            const { 
+                origin, 
+                destination, 
+                weight 
+            } = req.body
+
+            //check body
+            if (!origin || !destination || !weight) {
+                return res.status(400).send({
+                    message: 'please fill all required field'
+                })
+            }
+
+            const ongkir = await axios.post('https://api.rajaongkir.com/starter/cost', {
+                origin: origin,
+                destination: destination,
+                weight: weight,
+                courier: 'jne'
+            }, {
+                headers: {
+                    key: process.env.ONGKIR_KEY,
+                }
+            })
+            res.status(200).send({
+                message: 'success check ongkir',
+                status: 200,
+                data: ongkir.data.rajaongkir
+            })
+        }
+        catch (err) {
+            console.log(err)
+            res.status(500).send({
+                message: 'error check ongkir',
+                status: 500,
+            })
+        }
+    },
+
+    async cityRajaOngkir(req, res) {
+        try {
+            const city = await axios.get('https://api.rajaongkir.com/starter/city', {
+                headers: {
+                    key: process.env.ONGKIR_KEY,
+                }
+            })
+            res.status(200).send({
+                message: 'success get city',
+                status: 200,
+                data: city.data.rajaongkir.results
+            })
+        }
+        catch (err) {
+            console.log(err)
+            res.status(500).send({
+                message: 'error get city',
+                status: 500,
             })
         }
     }
