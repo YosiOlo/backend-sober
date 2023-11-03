@@ -3,6 +3,7 @@ const transactionController = require("../controllers/transactionController");
 const withdrawalController = require("../controllers/withdrawalController");
 const cartController = require("../controllers/cartController");
 const authMiddleware = require("../middlewares/authMiddleware");
+const paymentController = require("../controllers/paymentController");
 
 //admin
 transactionRoutes.get('/admin', authMiddleware.verifyAdmin, transactionController.getAll);
@@ -17,6 +18,7 @@ transactionRoutes.put('/admin/decline-withdrawal/:withdrawalId', authMiddleware.
 transactionRoutes.get('/users', authMiddleware.verifyToken, transactionController.getUser);
 transactionRoutes.get('/users/waiting', authMiddleware.verifyToken, transactionController.getUserWaiting);
 transactionRoutes.post('/users', authMiddleware.verifyToken);
+transactionRoutes.post('/payment', authMiddleware.verifyToken, paymentController.payment);
 transactionRoutes.get('/cart', authMiddleware.verifyToken, cartController.cartUser);
 transactionRoutes.post('/cart/:id', authMiddleware.verifyToken, cartController.addCart);
 transactionRoutes.delete('/cart/:id', authMiddleware.verifyToken, cartController.deleteCart);
