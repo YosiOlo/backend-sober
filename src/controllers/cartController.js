@@ -89,6 +89,22 @@ module.exports = {
             } catch (err) {
                 res.status(500).json({message: err.message});
             }
+
+            //check cart exist
+            const cartExist = await ec_carts.findOne({
+                where: {
+                    customer_id: userId,
+                    product_id,
+                }
+            });
+            if (cartExist) {
+                const qtyUpdate = cartExist.qty + qty;
+                await cartExist.update({
+                    qty: qtyUpdate,
+                });
+                return res.status(200).json({message: 'success add product to cart', data: cartExist});
+            }
+
             const cart = await ec_carts.create({
                 customer_id: userId,
                 product_id,
@@ -100,7 +116,7 @@ module.exports = {
             if (!cart) {
                 return res.status(401).json({message: 'fail create cart'});
             } else {
-                res.status(201).json({message: 'success add cart', data: cart});
+                res.status(201).json({message: 'success add product to cart', data: cart});
             }
         }
         catch (err) {
