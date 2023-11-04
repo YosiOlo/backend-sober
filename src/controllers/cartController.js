@@ -64,14 +64,14 @@ module.exports = {
         const {qty, attributes, options, is_buynow} = req.body;
         try {
             //check attribute exist
-            const attribute = await ec_product_attributes.findOne({
-                where: {
-                    id: attributes,
-                }
-            });
-            if (!attribute) {
-                return res.status(404).json({message: 'failed add cart, attribute not found'});
-            }
+            // const attribute = await ec_product_attributes.findOne({
+            //     where: {
+            //         id: attributes,
+            //     }
+            // });
+            // if (!attribute) {
+            //     return res.status(404).json({message: 'failed add cart, attribute not found'});
+            // }
             //check product exist
             try {
                 const product = await ec_products.findOne({
