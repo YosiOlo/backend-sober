@@ -98,7 +98,7 @@ module.exports = {
                 }
             });
             if (cartExist) {
-                const qtyUpdate = cartExist.qty + qty;
+                const qtyUpdate = parseInt(cartExist.qty) + parseInt(qty);
                 await cartExist.update({
                     qty: qtyUpdate,
                 });
@@ -108,7 +108,7 @@ module.exports = {
             const cart = await ec_carts.create({
                 customer_id: userId,
                 product_id,
-                qty,
+                qty: parseInt(qty),
                 attributes,
                 options,
                 is_buynow
