@@ -5,6 +5,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 discountRoutes.get('/', discountController.index);
 discountRoutes.get('/valid', discountController.stillValid);
 discountRoutes.get('/:id', discountController.ById);
+discountRoutes.get('/check/:code', discountController.checkDiscount);
 
 discountRoutes.get('/vendor/list', authMiddleware.verifyVendor, discountController.vendorDiscount);
 discountRoutes.get('/vendor/list/:id', authMiddleware.verifyVendor, discountController.vendorById);

@@ -17,7 +17,10 @@ module.exports = {
                 return res.status(200).json({message: 'Success', status: 200 ,data: discount});
             }
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            return res.status(500).json({
+                message: "Error when get discount",
+                status: 500
+            });
         }
     },
 
@@ -30,7 +33,10 @@ module.exports = {
                 return res.status(200).json({message: 'Success', status: 200 ,data: discount});
             }
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            return res.status(500).json({
+                message: "Error when get discount by id",
+                status: 500
+            });
         }
     },
 
@@ -52,7 +58,10 @@ module.exports = {
                 return res.status(200).json({message: 'Success get discount by id', status: 200 ,data: discount});
             }
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            return res.status(500).json({
+                message: "Error when get discount by id",
+                status: 500
+            });
         }
     },
 
@@ -79,7 +88,10 @@ module.exports = {
                 return res.status(200).json({message: 'Success', status: 200 ,data: discount});
             }
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            return res.status(500).json({
+                message: "Error when get valid discount",
+                status: 500
+            });
         }
     },
 
@@ -93,7 +105,10 @@ module.exports = {
                 return res.status(200).json({message: 'Success', status: 200 ,data: discount});
             }
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            return res.status(500).json({
+                message: "Error when delete discount",
+                status: 500
+            });
         }
     },
 
@@ -174,7 +189,10 @@ module.exports = {
             if (e instanceof Sequelize.ValidationError) {
                 return res.status(400).json({message: "code must unique", status: 400});
             } else {
-                return res.status(500).json({message: e.message, status: 500});
+                return res.status(500).json({
+                    message: "Error when create discount",
+                    status: 500
+                });
             }
         }
     },
@@ -218,7 +236,7 @@ module.exports = {
             if(e instanceof Sequelize.ValidationError) {
                 return res.status(400).json({message: "code must unique", status: 400});
             } else {
-                return res.status(500).json({message: e.message, status: 500});
+                return res.status(500).json({message: "Error when update discount", status: 500});
             }
         }
     },
@@ -240,7 +258,35 @@ module.exports = {
                 return res.status(200).json({message: 'Success', status: 200 ,data: discount});
             }
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            return res.status(500).json({
+                message: "Error when get vendor discount",
+                status: 500
+            });
+        }
+    },
+
+    async checkDiscount(req, res) {
+        const {code} = req.params;
+
+        try {
+            const discount = await ec_discount.findOne({
+                where: {
+                    code: code
+                }
+            });
+            if (discount === null) {
+                return res.status(404).json({message: 'Discount Not Found', status: 404});
+            } if (discount.quantity === 0) {
+                return res.status(400).json({message: 'Discount is out of stock', status: 400});
+            } if (discount.start_date > new Date()) {
+                return res.status(400).json({message: 'Discount is not started yet', status: 400});
+            } if (discount.end_date < new Date()) {
+                return res.status(400).json({message: 'Discount is expired', status: 400});
+            } else {
+                return res.status(200).json({message: 'Success', status: 200 ,data: discount});
+            }
+        } catch (e) {
+            return res.status(500).json({message: "Error when check discount", status: 500});
         }
     }
 
