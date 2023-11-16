@@ -16,9 +16,11 @@ transactionRoutes.put('/admin/decline-withdrawal/:withdrawalId', authMiddleware.
 
 //user
 transactionRoutes.get('/users', authMiddleware.verifyToken, transactionController.getUser);
+transactionRoutes.get('/users/gettoken/:id', authMiddleware.verifyToken, paymentController.paymentByid);
 transactionRoutes.get('/users/waiting', authMiddleware.verifyToken, transactionController.getUserWaiting);
-transactionRoutes.post('/users', authMiddleware.verifyToken);
-transactionRoutes.post('/payment', authMiddleware.verifyToken, paymentController.payment);
+transactionRoutes.post('/users/order/:id', authMiddleware.verifyToken, paymentController.createOrder);
+transactionRoutes.post('/users/payment', authMiddleware.verifyToken, paymentController.payment);
+transactionRoutes.post('/users/payment/return', authMiddleware.verifyToken, paymentController.paymentReturnData);
 transactionRoutes.get('/cart', authMiddleware.verifyToken, cartController.cartUser);
 transactionRoutes.post('/cart/:id', authMiddleware.verifyToken, cartController.addCart);
 transactionRoutes.delete('/cart/:id', authMiddleware.verifyToken, cartController.deleteCart);
@@ -39,5 +41,6 @@ transactionRoutes.delete('/vendor/withdrawal/:withdrawalId', authMiddleware.veri
 transactionRoutes.put('/vendor/address/:transId', authMiddleware.verifyVendor, transactionController.vendorUpdateOrderAddress);
 transactionRoutes.put('/vendor/note/:transId', authMiddleware.verifyVendor, transactionController.vendorUpdateNote);
 transactionRoutes.put('/vendor/return/:returnId', authMiddleware.verifyVendor, transactionController.updateVendorReturn);
+transactionRoutes.put('/vendor/accept-order/:transId', authMiddleware.verifyVendor, transactionController.vendorAcceptOrder);
 
 module.exports = transactionRoutes;

@@ -11,7 +11,8 @@ const {
     ec_shipment_histories,
     ec_customer,
     mp_vendor_info,
-    mp_customer_revenues
+    mp_customer_revenues,
+    ec_customer_paket
 } = require('../models');
 const Op = Sequelize.Op;
 const {v4: uuidv4} = require('uuid');
@@ -658,6 +659,59 @@ module.exports = {
         }
         catch (e) {
             return res.status(500).json({status: 500, message: e.message});
+        }
+    },
+
+    async vendorAcceptOrder(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {transId} = req.params
+        const {code} = req.body
+
+        try {
+            const order = await ec_orders.findOne({
+                where: {
+                    [Op.and]: [
+                        {store_id: storeId},
+                        {id: transId},
+                        {code: code}
+                    ]
+                },
+                include: ['payment_order']
+            });
+
+            if (order === null) {
+                return res.status(404).json({message: 'Order Not Found / Unauthorized vendor order', status: 404});
+            } else {
+
+                if(order.payment_order.status !== 'completed'){
+                    return res.status(400).json({message: 'Order Is Not Paid Yet', status: 400});
+                } else {
+                    //update relation
+                    await ec_orders.update({
+                        status: 'processing'
+                    }, {
+                        where: {
+                            id: transId
+                        }
+                    });
+
+                    await ec_order_histories.create({
+                        action: 'accept_order',
+                        description: `Order accepted by vendor: ${req.user.name}`,
+                        user_id: req.user.id,
+                        order_id: transId
+                    });
+
+                    return res.status(200).json({message: 'Success Accept Order', status: 200});
+                }
+            }
+        }
+        catch (e) {
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+            });
         }
     },
 
