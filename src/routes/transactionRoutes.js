@@ -18,7 +18,7 @@ transactionRoutes.put('/admin/decline-withdrawal/:withdrawalId', authMiddleware.
 transactionRoutes.get('/users', authMiddleware.verifyToken, transactionController.getUser);
 transactionRoutes.get('/users/gettoken/:id', authMiddleware.verifyToken, paymentController.paymentByid);
 transactionRoutes.get('/users/waiting', authMiddleware.verifyToken, transactionController.getUserWaiting);
-transactionRoutes.post('/users/order/:id', authMiddleware.verifyToken, paymentController.createOrder);
+transactionRoutes.post('/users/order', authMiddleware.verifyToken, paymentController.createOrder);
 transactionRoutes.post('/users/payment', authMiddleware.verifyToken, paymentController.payment);
 transactionRoutes.post('/users/payment/return', authMiddleware.verifyToken, paymentController.paymentReturnData);
 transactionRoutes.get('/cart', authMiddleware.verifyToken, cartController.cartUser);

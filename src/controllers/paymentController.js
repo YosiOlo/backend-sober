@@ -33,9 +33,8 @@ module.exports = {
                 kodepos,
                 coupon_code,
                 shipping_service,
-                quantity,
             } = req.body
-            let { sub_total, total_price, ship_amount } = req.body
+            let { sub_total, total_price, ship_amount, quantity } = req.body
 
             //check field
             if (!nama || !email || !phone || !provinsi || !kota || !alamat || !kodepos || !total_price || !ship_amount || !sub_total || !shipping_service || !quantity) {
@@ -44,17 +43,83 @@ module.exports = {
                 })
             }
 
-            const productId = req.params.id
+            const productId = req.body.products_id
             const userId = req.user.id
+            const result = []
 
-            const product = await ec_products.findOne({
-                where: {
-                    id: productId
+            //check product_id array
+            if (!productId) {
+                return res.status(400).send({
+                    message: 'Please fill product id'
+                })
+            } else {
+                try {
+                    if (productId.length < 1) {
+                        return res.status(400).send({
+                            message: 'Please fill product id'
+                        })
+                    } else {
+                        const id = productId.split(',')
+                        for (let i = 0; i < id.length; i++) {
+                            const product = await ec_products.findOne({
+                                where: {
+                                    id: id[i]
+                                }
+                            })
+                            if (!product) {
+                                result.push("null")
+                            } else {
+                                result.push(product)
+                            }
+                        }
+                        if (result.includes("null")) {
+                            return res.status(404).send({
+                                message: 'One or more product not found'
+                            })
+                        }
+                        //check different store
+                        const store = result[0].store_id
+                        for (let i = 0; i < result.length; i++) {
+                            if (result[i].store_id != store) {
+                                return res.status(400).send({
+                                    message: 'Please order in one store only'
+                                })
+                            }
+                        }
+                    }
+                } catch {
+                    return res.status(400).send({
+                        message: 'Invalid product id'
+                    })
                 }
-            })
-            if (!product) {
-                return res.status(404).send({
-                    message: 'Product not found'
+            }
+
+            //split quantity
+            let qty
+            try {
+                if (quantity.length < 1) {
+                    return res.status(400).send({
+                        message: 'Please fill quantity'
+                    })
+                } else {
+                    qty = quantity.split(',')
+                    if (qty.length !== result.length) {
+                        return res.status(400).send({
+                            message: 'Invalid length of quantity'
+                        })
+                    } else {
+                        for (let i = 0; i < qty.length; i++) {
+                            if (qty[i] < 1) {
+                                return res.status(400).send({
+                                    message: 'Invalid quantity'
+                                })
+                            }
+                        }
+                    }
+                }
+            } catch {
+                return res.status(400).send({
+                    message: 'Invalid quantity'
                 })
             }
 
@@ -95,23 +160,27 @@ module.exports = {
                     is_finished: false,
                     is_confirmed: false,
                     coupon_code,
-                    store_id: product.store_id,
+                    store_id: result[0].store_id,
                     shipping_method: "JNE",
                     shipping_amount: ship_amount,
                     sub_total,
                     shipping_service,
                 })
-                await ec_order_product.create({
-                    order_id: insertOrder.id,
-                    product_id: productId,
-                    qty: quantity,
-                    price: product.price,
-                    tax_amount: 0,
-                    product_name: product.name,
-                    product_image: product.image,
-                    weight: product.weight,
-                    product_type: product.type,
-                })
+                
+                for (let i = 0; i < result.length; i++) {
+                    await ec_order_product.create({
+                        order_id: insertOrder.id,
+                        product_id: result[i].id,
+                        qty: qty[i],
+                        price: result[i].price,
+                        tax_amount: 0,
+                        product_name: result[i].name,
+                        product_image: result[i].image,
+                        weight: result[i].weight,
+                        product_type: result[i].type,
+                    })
+                }
+
                 await ec_order_addresses.create({
                     order_id: insertOrder.id,
                     name: nama,

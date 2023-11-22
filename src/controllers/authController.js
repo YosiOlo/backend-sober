@@ -140,7 +140,11 @@ module.exports = {
                 }
             });
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                message: "Internal Error",
+                status: 500,
+            });
         }
 
     },
@@ -218,9 +222,17 @@ module.exports = {
             if (admins) {
                 if (await bcrypt.compare(password, admins.password)) {
                     const token = jwt.sign({id: admins.id, email: admins.email}, process.env.JWT_SECRET, {expiresIn: '1d'});
-                    return res.status(200).json({message: 'Admin Login success', token: token});
+                    return res.status(200).json({
+                        message: 'Admin Login success',
+                        token: token,
+                        status: 200,
+                        identity: "admin",
+                    });
                 } else {
-                    return res.status(400).json({message: 'Password not match', status: 400});
+                    return res.status(400).json({
+                        message: 'Password not match', 
+                        status: 400
+                    });
                 }
             }
         } catch (e) {
@@ -234,9 +246,15 @@ module.exports = {
         });
 
         if (!user) {
-            return res.status(400).json({message: 'Email not found!'});
+            return res.status(400).json({
+                message: 'Email not found!',
+                status: 400
+            });
         } else if(user.status !== "activated") {
-            return res.status(400).json({message: 'Email not verified yet!'});
+            return res.status(400).json({
+                message: 'Email not verified yet!',
+                status: 400
+            });
         }
 
         if (is_remember) {
@@ -286,7 +304,11 @@ module.exports = {
                     return res.status(400).json({message: 'Password not match', status: 400});
                 }
             } catch (e) {
-                return res.status(500).json({message: e.message});
+                console.log(e)
+                return res.status(500).json({
+                    message: "Internal Error",
+                    status: 500,
+                });
             }
         }
         
@@ -326,7 +348,11 @@ module.exports = {
             });
             return res.render("resetSuccess.ejs")
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                message: "Internal Error",
+                status: 500,
+            });
         }
     },
 
@@ -373,7 +399,11 @@ module.exports = {
             });
             return res.render("emailVerified.ejs")
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                message: "Internal Error",
+                status: 500,
+            });
         }
     },
 
@@ -479,7 +509,11 @@ module.exports = {
                 return res.status(200).json({message: 'Reset Password email sent', status: 200});
             });
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                message: "Internal Error",
+                status: 500,
+            });
         }
     },
 
@@ -539,7 +573,11 @@ module.exports = {
     
             return res.status(200).json({message: 'Logout success'});
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                message: "Internal Error",
+                status: 500,
+            });
         }
     }
 
