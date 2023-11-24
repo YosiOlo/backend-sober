@@ -44,8 +44,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error)
             res.status(500).json({
-                message: error.message
+                status: 500,
+                message: 'Internal server error on wishlist'
             });
         }
     },
@@ -91,8 +93,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error)
             res.status(500).json({
-                message: error.message
+                status: 500,
+                message: 'Internal Server Error on add wishlist'
             });
         }
     },
@@ -125,8 +129,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error)
             res.status(500).json({
-                message: error.message
+                status: 500,
+                message: 'Internal Server Error on delete wishlist'
             });
         }
     },
@@ -149,8 +155,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error)
             res.status(500).json({
-                message: error.message
+                status: 500,
+                message: 'Internal server error on wishlist'
             });
         }
     },
@@ -181,8 +189,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error)
             res.status(500).json({
-                message: error.message
+                status: 500,
+                message: 'Internal Server Error on delete wishlist'
             });
         }
     }

@@ -35,9 +35,10 @@ module.exports = {
             })
         }
         catch (err) {
+            console.log(err)
             return res.status(500).json({
-                status: 'error',
-                message: err.message
+                status: 500,
+                message: 'Internal Server Error'
             })
         }
     },
@@ -71,9 +72,10 @@ module.exports = {
             })
         }
         catch (err) {
+            console.log(err)
             return res.status(500).json({
-                status: 'error',
-                message: err.message
+                status: 500,
+                message: 'Internal Server Error'
             })
         }
     },
@@ -113,9 +115,10 @@ module.exports = {
             })
         }
         catch (err) {
+            console.log(err)
             return res.status(500).json({
-                status: 'error',
-                message: err.message
+                status: 500,
+                message: 'Internal Server Error'
             })
         }
     },
@@ -149,9 +152,10 @@ module.exports = {
             })
         }
         catch (err) {
+            console.log(err)
             return res.status(500).json({
-                status: 'error',
-                message: err.message
+                status: 500,
+                message: 'Internal Server Error'
             })
         }
     },
@@ -188,9 +192,10 @@ module.exports = {
             })
         }
         catch (err) {
+            console.log(err)
             return res.status(500).json({
-                status: 'error',
-                message: err.message
+                status: 500,
+                message: 'Internal Server Error'
             })
         }
     },
@@ -220,9 +225,10 @@ module.exports = {
             })
         }
         catch (err) {
+            console.log(err)
             return res.status(500).json({
-                status: 'error',
-                message: err.message
+                status: 500,
+                message: 'Internal Server Error'
             })
         }
     }

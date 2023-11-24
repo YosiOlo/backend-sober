@@ -53,9 +53,10 @@ module.exports = {
                 data: kodeposAll
             });
         } catch (error) {
-            res.status(400).json({
-                status: 400,
-                message: error.message
+            console.log(error);
+            res.status(500).json({
+                status: 500,
+                message: "Failed get kodepos data"
             });
         }
     },
@@ -74,9 +75,10 @@ module.exports = {
                 data: kodepos
             })
         } catch (e) {
-            res.status(400).json({
-                status: 400,
-                message: e.message
+            console.log(e)
+            res.status(500).json({
+                status: 500,
+                message: "Failed get kodepos data"
             })
         }
     }

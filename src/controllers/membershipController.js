@@ -14,9 +14,10 @@ module.exports = {
                 data: paket
             })
         } catch (error) {
+            console.log(error)
             res.status(500).send({
-                status: 'failed',
-                message: error.message
+                status: 500,
+                message: 'internal server error'
             })
         }
     }

@@ -39,10 +39,10 @@ module.exports = {
             });
         }
         catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }       
     },
@@ -62,7 +62,10 @@ module.exports = {
                 return res.status(400).json({message: 'Log not found'});
             }
         } catch (error) {
-            return res.status(400).json({message: 'Error on delete log'});
+            console.log(error)
+            return res.status(500).json({
+                message: 'Error on delete log'
+            });
         }
     },
 
@@ -87,7 +90,10 @@ module.exports = {
                 return res.status(400).json({message: 'Logs not found'});
             }
         } catch (error) {
-            return res.status(400).json({message: 'Error on delete logs'});
+            console.log(error)
+            return res.status(500).json({
+                message: 'Error on delete logs'
+            });
         }
     }
 }

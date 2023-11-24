@@ -25,7 +25,8 @@ module.exports = {
         try {
             const {id} = req.params;
             const order = await ec_orders.findByPk(id,{
-                include: ['order_addresses','order_histories', 'order_product', 'order_referrals', 'order_returns']
+                include: ['order_addresses','order_histories', 'order_product',
+                 'order_referrals', 'order_returns']
             });
             if (order) {
                 return res.json(order);
@@ -33,7 +34,11 @@ module.exports = {
                 return res.status(400).json({message: 'Order not found'});
             }
         } catch (error) {
-            return res.status(400).json({message: 'Error on get order'});
+            console.log(error)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error, On Get Order'
+            });
         }
     },
 
@@ -58,10 +63,10 @@ module.exports = {
             });
         }
         catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error, On Get Order'
             });
         }
     },
@@ -78,7 +83,11 @@ module.exports = {
                 return res.status(200).json({message: 'Success Delete Transaction', status: 200 ,data: discount});
             }
         } catch (e) {
-            return res.status(500).json({status: 500, message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500, 
+                message: 'Internal Server Error, On Delete Transaction'
+            });
         }
     },
 
@@ -109,10 +118,10 @@ module.exports = {
             });
         }
         catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error, On Get Order'
             });
         }
     },
@@ -143,10 +152,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error, On Get Waiting Payment'
             });
         }
     },
@@ -173,10 +182,10 @@ module.exports = {
             });
         }
         catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error, On Get Order'
             });
         }
     },
@@ -214,7 +223,11 @@ module.exports = {
                 });
             }
         } catch (error) {
-            return res.status(500).json({status: 500, message: error.message});
+            console.log(error)
+            return res.status(500).json({
+                status: 500, 
+                message: 'Internal Server Error, On Get Transaction By Id'
+            });
         }
     },
 
@@ -245,10 +258,10 @@ module.exports = {
             });
 
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error, On Get Returns'
             });
         }
 
@@ -289,10 +302,10 @@ module.exports = {
             }
 
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error, On Get Returns By Id'
             });
         }
     },
@@ -317,10 +330,10 @@ module.exports = {
             });
 
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error, On Get Revenue'
             });
         }
 
@@ -346,10 +359,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error, On Get Revenue History'
             });
         }
     },
@@ -377,10 +390,10 @@ module.exports = {
             });
 
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error, On Get Withdrawal'
             });
         }
     },
@@ -430,10 +443,10 @@ module.exports = {
             });
 
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error, On Add Withdrawal'
             });
         }
     },
@@ -496,7 +509,11 @@ module.exports = {
                 return res.status(200).json({message: 'Success Delete Transaction', status: 200});
             }
         } catch (e) {
-            return res.status(500).json({status: 500, message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500, 
+                message: 'Internal Server Error, On Delete Transaction'
+            });
         }
     },
 
@@ -561,7 +578,11 @@ module.exports = {
             }
         }
         catch (e) {
-            return res.status(500).json({status: 500, message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500, 
+                message: 'Internal Server Error, On Update Transaction Address'
+            });
         }
     },
 
@@ -597,7 +618,11 @@ module.exports = {
             }
         }
         catch (e) {
-            return res.status(500).json({status: 500, message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500, 
+                message: 'Internal Server Error, On Update Transaction Note'
+            });
         }
     },
 
@@ -658,7 +683,11 @@ module.exports = {
             }
         }
         catch (e) {
-            return res.status(500).json({status: 500, message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500, 
+                message: 'Internal Server Error, On Update Transaction Shipment'
+            });
         }
     },
 
@@ -710,7 +739,7 @@ module.exports = {
             console.log(e)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
+                message: 'Internal Server Error, On Accept Order'
             });
         }
     },
@@ -746,7 +775,11 @@ module.exports = {
                 return res.status(200).json({message: 'Success Update Return', status: 200});
             }
         } catch (e) {
-            return res.status(500).json({status: 500, message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500, 
+                message: 'Internal Server Error, On Update Return'
+            });
         }
     },
 
@@ -778,7 +811,11 @@ module.exports = {
                 return res.status(200).json({message: 'Success Delete Return', status: 200});
             }
         } catch (e) {
-            return res.status(500).json({status: 500, message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500, 
+                message: 'Internal Server Error, On Delete Return'
+            });
         }
     },
 
@@ -810,7 +847,11 @@ module.exports = {
             }
         }
         catch (e) {
-            return res.status(500).json({status: 500, message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500, 
+                message: 'Internal Server Error, On Delete Withdrawal'
+            });
         }
     },
 }

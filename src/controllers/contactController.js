@@ -23,7 +23,7 @@ module.exports = {
             console.log(error);
             res.status(500).send({
                 status: 500,
-                message: 'Something went wrong'
+                message: 'Internal server error'
             });
         }
     },
@@ -55,7 +55,7 @@ module.exports = {
             console.log(error);
             res.status(500).send({
                 status: 500,
-                message: 'Something went wrong'
+                message: 'Internal server error'
             });
         }
     },
@@ -89,7 +89,7 @@ module.exports = {
             console.log(error);
             res.status(500).send({
                 status: 500,
-                message: 'Something went wrong'
+                message: 'Internal server error'
             });
         }
     },
@@ -110,7 +110,7 @@ module.exports = {
             console.log(error);
             res.status(500).send({
                 status: 500,
-                message: 'Something went wrong'
+                message: 'Internal server error'
             });
         }
     },
@@ -151,7 +151,7 @@ module.exports = {
             console.log(error);
             res.status(500).send({
                 status: 500,
-                message: 'Something went wrong'
+                message: 'Internal server error'
             });
         }
     },
@@ -174,7 +174,7 @@ module.exports = {
             console.log(error);
             res.status(500).send({
                 status: 500,
-                message: 'Something went wrong'
+                message: 'Internal server error'
             });
         }
     }

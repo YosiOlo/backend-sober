@@ -69,10 +69,10 @@ module.exports = {
             });
         }
         catch (error) {
+            console.log(error);
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }   
     },
@@ -93,10 +93,10 @@ module.exports = {
             });
         }
         catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }   
     },
@@ -124,10 +124,10 @@ module.exports = {
             }
         }
         catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }   
     },
@@ -166,10 +166,10 @@ module.exports = {
             }
         }
         catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }   
     },
@@ -202,10 +202,10 @@ module.exports = {
             }
         }
         catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }   
     },
@@ -245,10 +245,10 @@ module.exports = {
                 data: arrays
             });
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }
     },
@@ -299,7 +299,7 @@ module.exports = {
                 } catch (error) {
                     return res.status(500).json({
                         status: 500,
-                        message: 'Internal Server Error, Failed Update Parent Review',
+                        message: 'Internal Server Error, Failed On Update Parent Review',
                     });
                 }
 
@@ -311,10 +311,10 @@ module.exports = {
             }
         }
         catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error, Failed Create Reply Review',
-                data: error
+                message: 'Internal Server Error, Failed Create Reply Review'
             });
         }
     },
@@ -356,10 +356,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error, Failed Delete Review',
-                data: error
+                message: 'Internal Server Error, Failed Delete Review'
             });
         }
     },
@@ -405,10 +405,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error, Failed Update Review',
-                data: error
+                message: 'Internal Server Error, Failed Update Review'
             });
         }
     },
@@ -459,10 +459,10 @@ module.exports = {
                 data: arrays
             });
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });   
         }
     },
@@ -520,10 +520,10 @@ module.exports = {
                         });
                     }
                 } catch (error) {
+                    console.log(error)
                     return res.status(500).json({
                         status: 500,
-                        message: 'Internal Server Error, Failed Insert Review',
-                        data: error
+                        message: 'Internal Server Error, Failed On Insert Review'
                     });
                 }
 
@@ -534,10 +534,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error, Failed Create Review',
-                data: error
+                message: 'Internal Server Error, Failed Create Review'
             });   
         }
     },
@@ -605,10 +605,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error, Failed Update Review',
-                data: error
+                message: 'Internal Server Error, Failed Update Review'
             });   
         }
     }

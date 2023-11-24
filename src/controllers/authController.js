@@ -284,7 +284,10 @@ module.exports = {
                     return res.status(400).json({message: 'Password not match', status: 400});
                 }
             } catch (e) {
-                return res.status(500).json({message: e.message});
+                console.log(e)
+                return res.status(500).json({
+                    message: "Internal Error Using Cookies",
+                });
             }
         } else {
             try {

@@ -54,7 +54,10 @@ module.exports = {
             }
         }
         catch (err) {
-            res.status(500).json({message: err.message});
+            console.log(err)
+            res.status(500).json({
+                message: "failed get cart data",
+            });
         }
     },
 
@@ -63,6 +66,7 @@ module.exports = {
         const product_id = req.params.id;
         const {qty, attributes, options, is_buynow} = req.body;
         try {
+
             //check attribute exist
             // const attribute = await ec_product_attributes.findOne({
             //     where: {
@@ -73,6 +77,7 @@ module.exports = {
             //     return res.status(404).json({message: 'failed add cart, attribute not found'});
             // }
             //check product exist
+            
             try {
                 const product = await ec_products.findOne({
                     where: {
@@ -87,7 +92,10 @@ module.exports = {
                     return res.status(404).json({message: 'failed add cart, stock not enough'});
                 }
             } catch (err) {
-                res.status(500).json({message: err.message});
+                console.log(err)
+                res.status(500).json({
+                    message: "failed add cart, product error",
+                });
             }
 
             //check cart exist
@@ -120,7 +128,10 @@ module.exports = {
             }
         }
         catch (err) {
-            res.status(500).json({message: err.message});
+            console.log(err)
+            res.status(500).json({
+                message: "failed add cart",
+            });
         }
     },
 
@@ -144,7 +155,10 @@ module.exports = {
             }
         }
         catch (err) {
-            res.status(500).json({message: err.message});
+            console.log(err)
+            res.status(500).json({
+                message: "failed delete cart",
+            });
         }
     },
 
@@ -173,7 +187,10 @@ module.exports = {
             }
         }
         catch (err) {
-            res.status(500).json({message: err.message});
+            console.log(err)
+            res.status(500).json({
+                message: "failed update cart",
+            });
         }
     },
 }

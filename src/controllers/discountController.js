@@ -17,8 +17,9 @@ module.exports = {
                 return res.status(200).json({message: 'Success', status: 200 ,data: discount});
             }
         } catch (e) {
+            console.log(e)
             return res.status(500).json({
-                message: "Error when get discount",
+                message: "Internal Error Server",
                 status: 500
             });
         }
@@ -33,6 +34,7 @@ module.exports = {
                 return res.status(200).json({message: 'Success', status: 200 ,data: discount});
             }
         } catch (e) {
+            console.log(e)
             return res.status(500).json({
                 message: "Error when get discount by id",
                 status: 500
@@ -58,6 +60,7 @@ module.exports = {
                 return res.status(200).json({message: 'Success get discount by id', status: 200 ,data: discount});
             }
         } catch (e) {
+            console.log(e)
             return res.status(500).json({
                 message: "Error when get discount by id",
                 status: 500
@@ -88,6 +91,7 @@ module.exports = {
                 return res.status(200).json({message: 'Success', status: 200 ,data: discount});
             }
         } catch (e) {
+            console.log(e)
             return res.status(500).json({
                 message: "Error when get valid discount",
                 status: 500
@@ -105,6 +109,7 @@ module.exports = {
                 return res.status(200).json({message: 'Success', status: 200 ,data: discount});
             }
         } catch (e) {
+            console.log(e)
             return res.status(500).json({
                 message: "Error when delete discount",
                 status: 500
@@ -189,6 +194,7 @@ module.exports = {
             if (e instanceof Sequelize.ValidationError) {
                 return res.status(400).json({message: "code must unique", status: 400});
             } else {
+                console.log(e)
                 return res.status(500).json({
                     message: "Error when create discount",
                     status: 500
@@ -236,6 +242,7 @@ module.exports = {
             if(e instanceof Sequelize.ValidationError) {
                 return res.status(400).json({message: "code must unique", status: 400});
             } else {
+                console.log(e)
                 return res.status(500).json({message: "Error when update discount", status: 500});
             }
         }
@@ -258,6 +265,7 @@ module.exports = {
                 return res.status(200).json({message: 'Success', status: 200 ,data: discount});
             }
         } catch (e) {
+            console.log(e)
             return res.status(500).json({
                 message: "Error when get vendor discount",
                 status: 500
@@ -286,8 +294,8 @@ module.exports = {
                 return res.status(200).json({message: 'Success', status: 200 ,data: discount});
             }
         } catch (e) {
+            console.log(e)
             return res.status(500).json({message: "Error when check discount", status: 500});
         }
     }
-
 };

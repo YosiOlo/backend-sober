@@ -72,10 +72,10 @@ module.exports = {
             });
         }
         catch (error) {
+            console.log(error);
             return res.status(500).json({
                 status: 500,
                 message: 'Internal Server Error',
-                data: error
             });
         }   
     },
@@ -265,10 +265,10 @@ module.exports = {
             });
         }
         catch (error) {
+            console.log(error);
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }   
     },
@@ -361,7 +361,11 @@ module.exports = {
                 })
             }
         } catch(e) {
-            return res.status(500).json({message: e.message});
+            console.log(e);
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+            });
         }
     },
 
@@ -523,10 +527,10 @@ module.exports = {
             }
         }
         catch (error) {
+            console.log(error);
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }   
     },
@@ -582,10 +586,10 @@ module.exports = {
             }
         }
         catch (error) {
+            console.log(error);
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }   
     },
@@ -709,10 +713,10 @@ module.exports = {
             });
         }
         catch (error) {
+            console.log(error);
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }
     },
@@ -771,10 +775,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error);
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });
         }
     },
@@ -1104,10 +1108,10 @@ module.exports = {
                 data: product
             });
         } catch (error) {
+            console.log(error);
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });   
         }
     },
@@ -1158,10 +1162,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error);
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });   
         }
     },
@@ -1195,10 +1199,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error);
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });   
         }
     },
@@ -1234,10 +1238,10 @@ module.exports = {
                 });
             }
         } catch (error) {
+            console.log(error);
             return res.status(500).json({
                 status: 500,
-                message: 'Internal Server Error',
-                data: error
+                message: 'Internal Server Error'
             });   
         }
     }

@@ -21,9 +21,10 @@ module.exports = {
                 data: withdrawal
             });
         } catch (error) {
-            res.status(400).json({
-                status: false,
-                message: error.message
+            console.log(error);
+            res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error on Withdrawal'
             });
         }
     },
@@ -57,9 +58,10 @@ module.exports = {
                 });
             }
         } catch (error) {
-            res.status(400).json({
-                status: false,
-                message: error.message
+            console.log(error);
+            res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error on Withdrawal By Customer Id'
             });
         }
     },
@@ -91,7 +93,11 @@ module.exports = {
                 return res.status(200).json({message: 'Success Accept Withdrawal', status: 200});
             }
         } catch (e) {
-            return res.status(500).json({status: 500, message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500, 
+                message: 'Internal Server Error on Accept Withdrawal'
+            });
         }
     },
 
@@ -114,7 +120,11 @@ module.exports = {
                 return res.status(200).json({message: 'Success Decline Withdrawal', status: 200});
             }
         } catch (e) {
-            return res.status(500).json({status: 500, message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500, 
+                message: 'Internal Server Error on Decline Withdrawal'
+            });
         }
     }
 }

@@ -19,37 +19,47 @@ module.exports = {
         const {id} = req.user;
 
         try {
-            if (password !== repassword) {
-                return res.status(400).json({message: 'Password not match'});
+            try {
+                if (password !== repassword) {
+                    return res.status(400).json({message: 'Password not match'});
+                }
+            } catch (e) {
+                return res.status(500).json({
+                    message: 'Something went wrong On password not match'
+                });
             }
+    
+            const user = await ec_customer.findOne({
+                where: {
+                    id: id
+                }
+            });
+    
+            const compare = await bcrypt.compare(oldpassword, user.password);
+    
+            if (!compare) {
+                return res.status(400).json({message: 'Old password not match'});
+            }
+    
+            const salt = await bcrypt.genSalt(10);
+            const hash = await bcrypt.hash(password, salt);
+    
+            await ec_customer.update({
+                password: hash
+            }, {
+                where: {
+                    id: id
+                }
+            });
+    
+            return res.status(200).json({message: 'Password updated'});
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error on forgot password'
+            })
         }
-
-        const user = await ec_customer.findOne({
-            where: {
-                id: id
-            }
-        });
-
-        const compare = await bcrypt.compare(oldpassword, user.password);
-
-        if (!compare) {
-            return res.status(400).json({message: 'Old password not match'});
-        }
-
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(password, salt);
-
-        await ec_customer.update({
-            password: hash
-        }, {
-            where: {
-                id: id
-            }
-        });
-
-        return res.status(200).json({message: 'Password updated'});
     },
 
     async updateProfile(req, res) {
@@ -81,7 +91,11 @@ module.exports = {
     
             return res.status(200).json({message: 'Profile updated'});
         } catch(e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error on update profile'
+            });
         }
     },
 
@@ -122,21 +136,33 @@ module.exports = {
                 customers
             );
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error on list customer'
+            });
         }
     },
 
     async currentUser(req, res) {
-        const {id} = req.user;
+        try {
+            const {id} = req.user;
 
-        const user = await ec_customer.findOne({
-            where: {
-                id: id
-            },
-            include: ['customer_address', 'customer_paket', 'customer_recently_viewed_product']
-        });
+            const user = await ec_customer.findOne({
+                where: {
+                    id: id
+                },
+                include: ['customer_address', 'customer_paket', 'customer_recently_viewed_product']
+            });
 
-        return res.status(200).json(user);
+            return res.status(200).json(user);
+        } catch(e) {
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error on current user'
+            })
+        }
     },
 
     async userInfo (req, res) {
@@ -169,9 +195,10 @@ module.exports = {
                 });
             }
         } catch (e) {
+            console.log(e)
             return res.status(500).json({
                 status: 500,
-                message: e.message
+                message: 'Internal Server Error on user info'
             });
         }
     },
@@ -220,7 +247,11 @@ module.exports = {
 
             return res.status(200).json({message: 'Address created'});
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error on user address'
+            });
         }
     },
 
@@ -259,7 +290,11 @@ module.exports = {
             }
 
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error on user delete address'
+            });
         }
     },
 
@@ -320,7 +355,11 @@ module.exports = {
             }
 
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error on user update address'
+            });
         }
     },
 
@@ -395,7 +434,11 @@ module.exports = {
             }
             return res.status(200).json({message: 'Ahli Waris created'});
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error on user ahli waris'
+            });
         }
     },
 
@@ -403,89 +446,113 @@ module.exports = {
     async addAdmin(req, res) {
         const {first_name, last_name, username, email, password, repassword} = req.body;
 
-        if (password !== repassword) {
-            return res.status(400).json({message: 'Password not match'});
+        try {
+            if (password !== repassword) {
+                return res.status(400).json({message: 'Password not match'});
+            }
+    
+            const salt = await bcrypt.genSalt(10);
+            const hash = await bcrypt.hash(password, salt);
+    
+            await users.create({
+                username: username,
+                email: email,
+                password: hash,
+                super_user: 1,
+                manage_supers: 1
+            });
+    
+            return res.status(200).json({message: 'Admin created'});
+        } catch (e) {
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error on add admin'
+            })
         }
-
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(password, salt);
-
-        await users.create({
-            username: username,
-            email: email,
-            password: hash,
-            super_user: 1,
-            manage_supers: 1
-        });
-
-        return res.status(200).json({message: 'Admin created'});
     },
 
     async updateProfileAdmin(req, res) {
         const {id} = req.user;
         const {first_name, last_name, username, email} = req.body;
 
-        if (id === '' || id === undefined) {
-            return res.status(400).json({message: 'Please fill id field'});
-        }
-
-        const user = await users.findOne({
-            where: {
-                id: id
+        try {
+            if (id === '' || id === undefined) {
+                return res.status(400).json({message: 'Please fill id field'});
             }
-        });
-
-        if (!user) {
-            return res.status(400).json({message: 'User not found'});
-        }
-
-        await users.update({
-            first_name: first_name,
-            last_name: last_name,
-            username: username,
-            email: email
-        }, {
-            where: {
-                id: id
+    
+            const user = await users.findOne({
+                where: {
+                    id: id
+                }
+            });
+    
+            if (!user) {
+                return res.status(400).json({message: 'User not found'});
             }
-        });
-
-        return res.status(200).json({message: 'Profile updated'});
+    
+            await users.update({
+                first_name: first_name,
+                last_name: last_name,
+                username: username,
+                email: email
+            }, {
+                where: {
+                    id: id
+                }
+            });
+    
+            return res.status(200).json({message: 'Profile updated'});
+        } catch(e) {
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error on update profile admin'
+            })
+        }
     },
 
     async updateCustomerProfile(req, res) {
         const {id} = req.user;
         const {fullname, dateofbirth, phone} = req.body;
         
-        //image upload path
-        const image_link = req.files['image_link'];
+        try {
+            //image upload path
+            const image_link = req.files['image_link'];
 
-        if (id === '' || id === undefined) {
-            return res.status(400).json({message: 'Please fill id field'});
-        }
-
-        const user = await ec_customer.findOne({
-            where: {
-                id: id
+            if (id === '' || id === undefined) {
+                return res.status(400).json({message: 'Please fill id field'});
             }
-        });
 
-        if (!user) {
-            return res.status(400).json({message: 'User not found'});
-        }
+            const user = await ec_customer.findOne({
+                where: {
+                    id: id
+                }
+            });
 
-        await ec_customer.update({
-            fullname: fullname,
-            dateofbirth: dateofbirth,
-            phone: phone,
-            avatar: image_link[0].path
-        }, {
-            where: {
-                id: id
+            if (!user) {
+                return res.status(400).json({message: 'User not found'});
             }
-        });
 
-        return res.status(200).json({message: 'Profile updated'});
+            await ec_customer.update({
+                fullname: fullname,
+                dateofbirth: dateofbirth,
+                phone: phone,
+                avatar: image_link[0].path
+            }, {
+                where: {
+                    id: id
+                }
+            });
+
+            return res.status(200).json({message: 'Profile updated'});
+        } catch(e) {
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error on update profile customer'
+            })
+        }
     },
 
     //vendor
@@ -528,7 +595,11 @@ module.exports = {
                 });
             }
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error on vendor info'
+            });
         }
     },
 
@@ -583,7 +654,11 @@ module.exports = {
                 return res.status(200).json({message: 'Tax info updated'});
             }
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error on vendor tax'
+            });
         }
     },
 
@@ -655,7 +730,11 @@ module.exports = {
                 return res.status(400).json({message: 'Payment Method not found'});
             }
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error on vendor payment'
+            });
         }
     },
 
@@ -739,7 +818,11 @@ module.exports = {
 
             return res.status(200).json({message: 'Store profile info updated'});
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error on vendor profile'
+            });
         }
     },
 
@@ -831,7 +914,11 @@ module.exports = {
 
             return res.status(200).json({message: 'Store profile info updated'});
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error on vendor tambahan'
+            });
         }
     },
 
@@ -886,7 +973,11 @@ module.exports = {
             }
 
         } catch (e) {
-            return res.status(500).json({message: e.message});
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error on list vendor'
+            });
         }
     }
 }
