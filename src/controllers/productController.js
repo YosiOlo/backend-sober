@@ -1120,48 +1120,408 @@ module.exports = {
         const storeId = req.user.dataValues.store.dataValues.id;
         const {id} = req.params;
         const {
-            name, 
+            name,
+            etalase, 
             description, 
+            content,
+            with_storehouse_management,
+            allow_checkout_when_out_of_stock,
+            brand_id,
+            product_collections,
             price, 
+            fee,
+            hpp,
+            is_variation,
+            sale_price,
+            cost_per_item,
             stock, 
+            stock_status,
+            wide,
+            length,
+            height,
             weight, 
             sku, 
-            images, 
-            category_id, 
-            attribute_set_id
+            kategori_1,
+            kategori_2,
+            kategori_3,
+            barcodes,
+            related_products,
+            cross_sale,
+            tags,
+            attributes_variation,
+            options,
         } = req.body;
         try {
-            const product = await ec_products.findOne({
+
+            //check if product exist
+            const productExist = await ec_products.findOne({
                 where: {
                     id: id,
                     store_id: storeId
                 }
             });
-            if (!product) {
+            if (!productExist) {
                 return res.status(404).json({
                     status: 404,
                     message: 'Product Not Found / Unauthorized Vendor',
                     data: {}
                 });
-            } else {
-                await product.update({
+            }
+
+            //check if product exist
+            const productExist2 = await ec_products.findOne({
+                where: {
                     name: name,
-                    description: description,
-                    price: price,
-                    stock: stock,
-                    weight: weight,
-                    sku: sku,
-                    images: images,
-                    category_id: category_id,
-                    attribute_set_id: attribute_set_id
-                });
-                return res.status(200).json({
-                    status: 200,
-                    message: 'Success Update Product',
-                    data: product
+                    store_id: storeId
+                }
+            });
+            if (productExist2 && productExist2.dataValues.id != id && is_variation == false) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Product already exist',
                 });
             }
-        } catch (error) {
+
+            //check if barcode exist
+            const barcodeExist = await ec_products.findOne({
+                where: {
+                    barcode: barcodes,
+                    store_id: storeId
+                }
+            });
+            if (barcodeExist && barcodeExist.dataValues.id != id) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Barcode already exist',
+                });
+            }
+
+            let images = [];
+            if (req.files.length > 0) {
+                req.files.map((file) => {
+                    //remove public path
+                    file.path = file.path.replace('public/', '');
+                    images.push(file.path);
+                });
+                //serialize images
+                images = JSON.stringify(images);
+
+                //delete images from public folder
+                const split = productExist.dataValues.images.split(',').map((image) => {
+                    //remove backslash, double quote, and square bracket
+                    image = image.replace(/\\/g, "").replace(/"/g, "").replace(/\[/g, "").replace(/\]/g, "");
+                    if (!images.includes(image)) {
+                        fs.unlink(`./public/${image}`, (err) => {
+                            if (err) {
+                                console.error(err)
+                                return
+                            }
+                        }
+                        );
+                    }
+                });
+
+            } else {
+                images = productExist.dataValues.images;
+            }
+
+            await productExist.update({
+                name: name ? name : productExist.dataValues.name,
+                etalase: etalase ? etalase : productExist.dataValues.etalase,
+                description: description ? description : productExist.dataValues.description,
+                content: content ? content : productExist.dataValues.content,
+                status: 'publish',
+                images: images ? images : productExist.dataValues.images,
+                sku: sku ? sku : productExist.dataValues.sku,
+                allow_checkout_when_out_of_stock: allow_checkout_when_out_of_stock ? allow_checkout_when_out_of_stock : productExist.dataValues.allow_checkout_when_out_of_stock,
+                with_storehouse_management: with_storehouse_management ? with_storehouse_management : productExist.dataValues.with_storehouse_management,
+                brand_id: brand_id ? brand_id : productExist.dataValues.brand_id,
+                hpp: hpp ? hpp : productExist.dataValues.hpp,
+                fee: fee ? fee : productExist.dataValues.fee,
+                price: price ? price : productExist.dataValues.price,
+                sale_price: sale_price ? sale_price : productExist.dataValues.sale_price,
+                start_date: new Date(),
+                length: length ? length : productExist.dataValues.length,
+                wide: wide ? wide : productExist.dataValues.wide,
+                height: height ? height : productExist.dataValues.height,
+                weight: weight ? weight : productExist.dataValues.weight,
+                stock_status: stock_status ? stock_status : productExist.dataValues.stock_status,
+                created_by_id: 0,
+                created_by_type: 'vendor',
+                product_type: 'simple',
+                barcode: barcodes ? barcodes : productExist.dataValues.barcode,
+                cost_per_item: cost_per_item ? cost_per_item : productExist.dataValues.cost_per_item,
+                store_id: storeId,
+                approved_by: 0,
+                kategori1: kategori_1 ? kategori_1 : productExist.dataValues.kategori1,
+                kategori2: kategori_2 ? kategori_2 : productExist.dataValues.kategori2,
+                kategori3: kategori_3 ? kategori_3 : productExist.dataValues.kategori3
+            });
+
+            //add product related
+            if (related_products != '' && related_products != undefined) {
+                // delete product related
+                const relatedProducts = await ec_product_related_relations.findAll({
+                    where: {
+                        from_product_id: id
+                    }
+                });
+
+                if (relatedProducts) {
+                    relatedProducts.map(async (relatedProduct) => {
+                        await relatedProduct.destroy();
+                    }
+                    );
+                }
+
+                try {
+                    const relatedProductsArray = JSON.parse(related_products);
+                    relatedProductsArray.map(async (related_product) => {
+                        await ec_product_related_relations.create({
+                            from_product_id: productExist.dataValues.id,
+                            to_product_id: related_product
+                        });
+                    });
+                } catch (error) {
+                    return res.status(400).json({
+                        status: 400,
+                        message: 'Related Products must be an array',
+                    });
+                }
+            }
+
+            //add product cross sale
+            if (cross_sale != '' && cross_sale != undefined) {
+                // delete product cross sale
+                const crossSaleProducts = await ec_product_cross_sale_relations.findAll({
+                    where: {
+                        from_product_id: id
+                    }
+                });
+
+                if (crossSaleProducts) {
+                    crossSaleProducts.map(async (crossSaleProduct) => {
+                        await crossSaleProduct.destroy();
+                    }
+                    );
+                }
+
+                try {
+                    const crossSaleArray = JSON.parse(cross_sale);
+                    crossSaleArray.map(async (cross_sale) => {
+                        await ec_product_cross_sale_relations.create({
+                            from_product_id: productExist.dataValues.id,
+                            to_product_id: cross_sale
+                        });
+                    });
+                } catch (error) {
+                    return res.status(400).json({
+                        status: 400,
+                        message: 'Cross Sale Products must be an array',
+                    });
+                }
+            }
+
+            //add product collections
+            if (product_collections != '' && product_collections != undefined) {
+                // delete product collections
+                const productCollections = await ec_product_collection_products.findAll({
+                    where: {
+                        product_id: id
+                    }
+                });
+
+                if (productCollections) {
+                    productCollections.map(async (productCollection) => {
+                        await productCollection.destroy();
+                    }
+                    );
+                }
+
+                try {
+                    const productCollectionsArray = JSON.parse(product_collections);
+                    productCollectionsArray.map(async (product_collection) => {
+                        //check collection
+                        const collection = await ec_product_collections.findOne({
+                            where: {
+                                id: product_collection
+                            }
+                        });
+                        if (!collection) {
+                            return res.status(400).json({
+                                status: 400,
+                                message: 'Product Collection Not Found',
+                            });
+                        }
+                        await ec_product_collection_products.create({
+                            product_collection_id: product_collection,
+                            product_id: productExist.dataValues.id
+                        });
+                    });
+                } catch (error) {
+                    return res.status(400).json({
+                        status: 400,
+                        message: 'Product Collections must be an array',
+                    });
+                }
+            }
+
+            //add product tags
+            if (tags != undefined && tags != '') {
+                // delete product tags
+                const productTags = await ec_product_tag_product.findAll({
+                    where: {
+                        product_id: id
+                    }
+                });
+
+                if (productTags) {
+                    productTags.map(async (productTag) => {
+                        await productTag.destroy();
+                    }
+                    );
+                }
+
+                try {
+                    const tagsArray = JSON.parse(tags);
+                    tagsArray.map(async (tag) => {
+                        //check tag
+                        const tagExist = await ec_product_tags.findOne({
+                            where: {
+                                id: tag
+                            }
+                        });
+                        if (!tagExist) {
+                            return res.status(400).json({
+                                status: 400,
+                                message: 'Tag Not Found',
+                            });
+                        }
+                        await ec_product_tag_product.create({
+                            product_id: productExist.dataValues.id,
+                            tag_id: tag
+                        });
+                    });
+                } catch (error) {
+                    return res.status(400).json({
+                        status: 400,
+                        message: 'Tags must be an array',
+                    });
+                }
+            }
+
+            //add product options
+            if (options != undefined && options != '') {
+                // delete product options
+                const productOptions = await ec_options.findAll({
+                    where: {
+                        product_id: id
+                    }
+                });
+
+                if (productOptions) {
+                    productOptions.map(async (productOption) => {
+                        await productOption.destroy();
+                    }
+                    );
+                }
+
+                try {
+                    const optionsArray = JSON.parse(options);
+                    optionsArray.map(async (option, index) => {
+                        if (!option.name || !option.type || !option.is_required || !option.values) {
+                            return res.status(400).json({
+                                status: 400,
+                                message: `field is required (name, type, is_required, values) on index ${index}`,
+                            });
+                        }
+                        const datas = await ec_options.create({
+                            product_id: productExist.dataValues.id,
+                            name: option.name,
+                            option_type: option.type,
+                            is_required: option.is_required,
+                            order: index
+                        });
+                        const optionId = datas.dataValues.id;
+                        const optionValuesArray = option.values;
+                        optionValuesArray.map(async (optionValue, index) => {
+                            if (!optionValue.label || !optionValue.price || !optionValue.price_type) {
+                                return res.status(400).json({
+                                    status: 400,
+                                    message: `field is required (label, price, price_type) on index ${index}`,
+                                });
+                            }
+                            await ec_option_value.create({
+                                option_id: optionId,
+                                option_value: optionValue.label,
+                                affect_price: optionValue.price,
+                                order: index,
+                                affect_type: optionValue.price_type,
+                            });
+                        });
+                    });
+                } catch (error) {
+                    return res.status(400).json({
+                        status: 400,
+                        message: 'Options must be an object',
+                    });
+                }
+            }
+
+            //add product attributes
+            if (attributes_variation != undefined && attributes_variation != '') {
+                // delete product attributes
+                const productAttributes = await ec_product_with_attribute_set.findAll({
+                    where: {
+                        product_id: id
+                    }
+                });
+
+                if (productAttributes) {
+                    productAttributes.map(async (productAttribute) => {
+                        await productAttribute.destroy();
+                    }
+                    );
+                }
+                
+                try {
+                    const attributesVariationArray = JSON.parse(attributes_variation);
+                    attributesVariationArray.map(async (attribute, index) => {
+                        //check attribute sets
+                        const attributeSet = await ec_product_attribute_sets.findOne({
+                            where: {
+                                id: attribute
+                            }
+                        });
+                        if (!attributeSet) {
+                            return res.status(400).json({
+                                status: 400,
+                                message: 'Attribute Set Not Found',
+                            });
+                        }
+                        
+                        const sets = await ec_product_with_attribute_set.create({
+                            product_id: productExist.dataValues.id,
+                            attribute_set_id: attribute,
+                            order: 0
+                        });
+                      
+                    });
+                } catch (error) {
+                    return res.status(400).json({
+                        status: 400,
+                        message: 'Attributes must be an object',
+                    });
+                }
+            }
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Success Update Product',
+                data: productExist
+            });
+        }
+        catch (error) {
             console.log(error);
             return res.status(500).json({
                 status: 500,

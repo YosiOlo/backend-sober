@@ -42,5 +42,6 @@ transactionRoutes.put('/vendor/address/:transId', authMiddleware.verifyVendor, t
 transactionRoutes.put('/vendor/note/:transId', authMiddleware.verifyVendor, transactionController.vendorUpdateNote);
 transactionRoutes.put('/vendor/return/:returnId', authMiddleware.verifyVendor, transactionController.updateVendorReturn);
 transactionRoutes.put('/vendor/accept-order/:transId', authMiddleware.verifyVendor, transactionController.vendorAcceptOrder);
+transactionRoutes.put('/vendor/decline-order/:transId', authMiddleware.verifyVendor, transactionController.vendorRejectOrder);
 
 module.exports = transactionRoutes;

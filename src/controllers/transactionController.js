@@ -744,6 +744,66 @@ module.exports = {
         }
     },
 
+    async vendorRejectOrder(req, res) {
+        const storeId = req.user.dataValues.store.dataValues.id;
+        const {transId} = req.params
+        const {code} = req.body
+
+        try {
+            const order = await ec_orders.findOne({
+                where: {
+                    [Op.and]: [
+                        {store_id: storeId},
+                        {id: transId},
+                        {code: code}
+                    ]
+                },
+                include: ['payment_order']
+            });
+
+            if (order === null) {
+                return res.status(404).json({message: 'Order Not Found / Unauthorized vendor order', status: 404});
+            } else {
+
+                if(order.payment_order.status !== 'completed'){
+                    return res.status(400).json({message: 'Order Is Not Paid Yet', status: 400});
+                } else {
+                    //update relation
+                    await ec_orders.update({
+                        status: 'rejected & refunded'
+                    }, {
+                        where: {
+                            id: transId
+                        }
+                    });
+
+                    await ec_order_histories.create({
+                        action: 'reject_order',
+                        description: `Order rejected by vendor: ${req.user.name}`,
+                        user_id: req.user.id,
+                        order_id: transId
+                    });
+
+                    await ec_order_histories.create({
+                        action: 'refund_order',
+                        description: `Order refunded by vendor: ${req.user.name}`,
+                        user_id: req.user.id,
+                        order_id: transId
+                    });
+
+                    return res.status(200).json({message: 'Success Reject Order', status: 200});
+                }
+            }
+        }
+        catch (e) {
+            console.log(e)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error, On Reject Order'
+            });
+        }
+    },
+
     async updateVendorReturn (req, res) {
         const storeId = req.user.dataValues.store.dataValues.id;
         const {returnId} = req.params
